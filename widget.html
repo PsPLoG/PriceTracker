@@ -1,188 +1,165 @@
-import React, { useState, useEffect } from 'react';
-import { ShoppingCart, Tag, DollarSign, ExternalLink, AlertCircle } from 'lucide-react';
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>가격 위젯</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-transparent">
+    <div id="widget-container" class="max-w-md mx-auto p-4"></div>
 
-function PriceWidget() {
-  const [product, setProduct] = useState(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
+    <script>
+        // URL 파라미터에서 블로그 ID 가져오기
+        const params = new URLSearchParams(window.location.search);
+        const blogId = params.get('id');
 
-  // URL 파라미터에서 블로그 ID 가져오기
-  const params = new URLSearchParams(window.location.search);
-  const blogId = params.get('id');
+        async function loadWidget() {
+            const container = document.getElementById('widget-container');
 
-  useEffect(() => {
-    if (!blogId) {
-      setError('블로그 게시글 ID가 필요합니다. ?id=blog-post-1 형식으로 접근해주세요.');
-      setLoading(false);
-      return;
-    }
+            if (!blogId) {
+                container.innerHTML = `
+                    <div class="p-4 bg-red-50 border-2 border-red-200 rounded-lg">
+                        <div class="flex items-center text-red-700">
+                            <span class="mr-2">⚠️</span>
+                            <span>블로그 게시글 ID가 필요합니다. ?id=blog-post-1 형식으로 접근해주세요.</span>
+                        </div>
+                    </div>
+                `;
+                return;
+            }
 
-    // localStorage에서 데이터 로드 (GitHub Pages용으로는 products.json을 fetch해야 함)
-    // 여기서는 데모를 위해 localStorage 사용
-    const saved = localStorage.getItem('aliexpress_products');
-    
-    if (saved) {
-      try {
-        const data = JSON.parse(saved);
-        const foundProduct = data.products[blogId];
-        
-        if (foundProduct) {
-          setProduct(foundProduct);
-        } else {
-          setError(`ID "${blogId}"에 해당하는 상품을 찾을 수 없습니다.`);
+            try {
+                // products.json 파일 로드
+                const response = await fetch('products.json');
+                if (!response.ok) {
+                    throw new Error('products.json 파일을 찾을 수 없습니다.');
+                }
+                
+                const data = await response.json();
+                const product = data.products[blogId];
+                
+                if (!product) {
+                    throw new Error(`ID "${blogId}"에 해당하는 상품을 찾을 수 없습니다.`);
+                }
+                
+                // 최종 가격 계산
+                let finalPrice = product.final_price;
+                if (!finalPrice) {
+                    if (product.coupon.type === 'percent') {
+                        finalPrice = product.current_price * (1 - product.coupon.discount / 100);
+                    } else {
+                        finalPrice = product.current_price - product.coupon.discount;
+                    }
+                }
+                
+                const savingsPercent = ((product.current_price - finalPrice) / product.current_price * 100).toFixed(0);
+                const savingsAmount = (product.current_price - finalPrice).toFixed(2);
+                
+                container.innerHTML = `
+                    <div class="bg-white rounded-xl shadow-lg border-2 border-orange-200 overflow-hidden">
+                        ${product.image ? `
+                            <div class="w-full h-48 bg-gray-100">
+                                <img src="${product.image}" alt="${product.name}" 
+                                     class="w-full h-full object-cover"
+                                     onerror="this.style.display='none'">
+                            </div>
+                        ` : ''}
+                        
+                        <div class="p-6">
+                            <!-- 상품명 -->
+                            <h2 class="text-xl font-bold text-gray-800 mb-4">${product.name}</h2>
+                            
+                            <!-- 정가 -->
+                            <div class="mb-3">
+                                <div class="flex items-center text-sm text-gray-500 mb-1">
+                                    <span class="mr-1">💵</span>
+                                    <span>정가</span>
+                                </div>
+                                <div class="text-2xl font-bold text-gray-400 line-through">
+                                    $${product.original_price.toFixed(2)}
+                                </div>
+                            </div>
+                            
+                            <!-- 현재 판매가 -->
+                            <div class="mb-4">
+                                <div class="text-sm text-gray-500 mb-1">💰 현재 판매가</div>
+                                <div class="text-2xl font-bold text-gray-600">
+                                    $${product.current_price.toFixed(2)}
+                                </div>
+                            </div>
+                            
+                            <!-- 쿠폰 정보 -->
+                            <div class="mb-4 p-4 bg-gradient-to-r from-orange-100 to-red-100 rounded-lg border-2 border-dashed border-orange-300">
+                                <div class="flex items-center justify-between mb-2">
+                                    <div class="flex items-center">
+                                        <span class="mr-2">🏷️</span>
+                                        <span class="font-semibold text-orange-800">쿠폰 코드</span>
+                                    </div>
+                                    <code class="px-3 py-1 bg-white rounded font-mono text-sm font-bold text-orange-600 border border-orange-300 select-all">
+                                        ${product.coupon.code}
+                                    </code>
+                                </div>
+                                <div class="text-sm text-orange-700">
+                                    ${product.coupon.type === 'percent' 
+                                        ? `${product.coupon.discount}% 할인` 
+                                        : `$${product.coupon.discount} 할인`}
+                                </div>
+                            </div>
+                            
+                            <!-- 최종 가격 -->
+                            <div class="mb-4 p-4 bg-green-50 rounded-lg border-2 border-green-200">
+                                <div class="flex items-center text-sm text-gray-700 mb-2">
+                                    <span class="mr-1">🛒</span>
+                                    <span class="font-semibold">쿠폰 적용 시 최종 가격</span>
+                                </div>
+                                <div class="flex items-baseline justify-between">
+                                    <span class="text-4xl font-bold text-green-600">
+                                        $${finalPrice.toFixed(2)}
+                                    </span>
+                                    <div class="text-right">
+                                        <div class="px-3 py-1 bg-red-500 text-white text-sm font-bold rounded mb-1">
+                                            ${savingsPercent}% 절약
+                                        </div>
+                                        <div class="text-xs text-gray-600">
+                                            $${savingsAmount} 할인
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <!-- 구매 버튼 -->
+                            <a href="${product.url}" 
+                               target="_blank" 
+                               rel="noopener noreferrer"
+                               class="flex items-center justify-center gap-2 w-full py-3 bg-gradient-to-r from-orange-500 to-red-500 hover:from-orange-600 hover:to-red-600 text-white font-bold rounded-lg transition-all transform hover:scale-105 shadow-md">
+                                <span>🔗</span>
+                                알리익스프레스에서 구매하기
+                            </a>
+                            
+                            <div class="mt-4 pt-4 border-t border-gray-200 text-xs text-gray-500 text-center">
+                                💡 체크아웃 시 위 쿠폰 코드를 입력하세요
+                                <div class="mt-1">
+                                    마지막 업데이트: ${new Date(product.last_updated).toLocaleString('ko-KR')}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            } catch (error) {
+                container.innerHTML = `
+                    <div class="p-4 bg-red-50 border-2 border-red-200 rounded-lg">
+                        <div class="flex items-center text-red-700">
+                            <span class="mr-2">❌</span>
+                            <span>${error.message}</span>
+                        </div>
+                    </div>
+                `;
+            }
         }
-      } catch (e) {
-        setError('데이터를 불러오는 중 오류가 발생했습니다.');
-      }
-    } else {
-      setError('저장된 상품 데이터가 없습니다. 관리 툴에서 먼저 상품을 추가해주세요.');
-    }
-    
-    setLoading(false);
-  }, [blogId]);
 
-  if (loading) {
-    return (
-      <div className="flex items-center justify-center p-6 bg-gradient-to-br from-orange-50 to-red-50 rounded-lg">
-        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-orange-500"></div>
-        <span className="ml-3 text-gray-600">가격 정보 로딩중...</span>
-      </div>
-    );
-  }
-
-  if (error) {
-    return (
-      <div className="p-4 bg-red-50 border-2 border-red-200 rounded-lg">
-        <div className="flex items-center text-red-700">
-          <AlertCircle className="w-5 h-5 mr-2 flex-shrink-0" />
-          <span>{error}</span>
-        </div>
-      </div>
-    );
-  }
-
-  if (!product) {
-    return (
-      <div className="p-4 bg-yellow-50 border-2 border-yellow-200 rounded-lg">
-        <div className="flex items-center text-yellow-700">
-          <AlertCircle className="w-5 h-5 mr-2 flex-shrink-0" />
-          <span>상품 정보를 찾을 수 없습니다.</span>
-        </div>
-      </div>
-    );
-  }
-
-  // 최종 가격 계산
-  let finalPrice = product.final_price;
-  if (!finalPrice) {
-    if (product.coupon.type === 'percent') {
-      finalPrice = product.current_price * (1 - product.coupon.discount / 100);
-    } else {
-      finalPrice = product.current_price - product.coupon.discount;
-    }
-  }
-
-  const savingsPercent = ((product.current_price - finalPrice) / product.current_price * 100).toFixed(0);
-  const savingsAmount = (product.current_price - finalPrice).toFixed(2);
-
-  return (
-    <div className="max-w-md mx-auto">
-      <div className="bg-white rounded-xl shadow-lg border-2 border-orange-200 overflow-hidden">
-        {/* 상품 이미지 */}
-        {product.image && (
-          <div className="w-full h-48 bg-gray-100">
-            <img 
-              src={product.image} 
-              alt={product.name} 
-              className="w-full h-full object-cover"
-              onError={(e) => e.target.style.display = 'none'}
-            />
-          </div>
-        )}
-        
-        <div className="p-6">
-          {/* 상품명 */}
-          <h2 className="text-xl font-bold text-gray-800 mb-4">{product.name}</h2>
-          
-          {/* 정가 */}
-          <div className="mb-3">
-            <div className="flex items-center text-sm text-gray-500 mb-1">
-              <DollarSign className="w-4 h-4 mr-1" />
-              <span>정가</span>
-            </div>
-            <div className="text-2xl font-bold text-gray-400 line-through">
-              ${product.original_price.toFixed(2)}
-            </div>
-          </div>
-          
-          {/* 현재 판매가 */}
-          <div className="mb-4">
-            <div className="text-sm text-gray-500 mb-1">💰 현재 판매가</div>
-            <div className="text-2xl font-bold text-gray-600">
-              ${product.current_price.toFixed(2)}
-            </div>
-          </div>
-          
-          {/* 쿠폰 정보 */}
-          <div className="mb-4 p-4 bg-gradient-to-r from-orange-100 to-red-100 rounded-lg border-2 border-dashed border-orange-300">
-            <div className="flex items-center justify-between mb-2">
-              <div className="flex items-center">
-                <Tag className="w-5 h-5 text-orange-600 mr-2" />
-                <span className="font-semibold text-orange-800">쿠폰 코드</span>
-              </div>
-              <code className="px-3 py-1 bg-white rounded font-mono text-sm font-bold text-orange-600 border border-orange-300 select-all">
-                {product.coupon.code}
-              </code>
-            </div>
-            <div className="text-sm text-orange-700">
-              {product.coupon.type === 'percent' 
-                ? `${product.coupon.discount}% 할인` 
-                : `$${product.coupon.discount} 할인`}
-            </div>
-          </div>
-          
-          {/* 최종 가격 */}
-          <div className="mb-4 p-4 bg-green-50 rounded-lg border-2 border-green-200">
-            <div className="flex items-center text-sm text-gray-700 mb-2">
-              <ShoppingCart className="w-4 h-4 mr-1" />
-              <span className="font-semibold">쿠폰 적용 시 최종 가격</span>
-            </div>
-            <div className="flex items-baseline justify-between">
-              <span className="text-4xl font-bold text-green-600">
-                ${finalPrice.toFixed(2)}
-              </span>
-              <div className="text-right">
-                <div className="px-3 py-1 bg-red-500 text-white text-sm font-bold rounded mb-1">
-                  {savingsPercent}% 절약
-                </div>
-                <div className="text-xs text-gray-600">
-                  ${savingsAmount} 할인
-                </div>
-              </div>
-            </div>
-          </div>
-          
-          {/* 구매 버튼 */}
-          <a 
-            href={product.url} 
-            target="_blank" 
-            rel="noopener noreferrer"
-            className="flex items-center justify-center gap-2 w-full py-3 bg-gradient-to-r from-orange-500 to-red-500 hover:from-orange-600 hover:to-red-600 text-white font-bold rounded-lg transition-all transform hover:scale-105 shadow-md"
-          >
-            <ExternalLink className="w-5 h-5" />
-            알리익스프레스에서 구매하기
-          </a>
-          
-          <div className="mt-4 pt-4 border-t border-gray-200 text-xs text-gray-500 text-center">
-            💡 체크아웃 시 위 쿠폰 코드를 입력하세요
-            <div className="mt-1">
-              마지막 업데이트: {new Date(product.last_updated).toLocaleString('ko-KR')}
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-  );
-}
-
-export default PriceWidget;
+        // 위젯 로드
+        loadWidget();
+    </script>
+</body>
+</html>
