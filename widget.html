@@ -15,6 +15,9 @@
     <script>
         const params = new URLSearchParams(window.location.search);
         const blogId = params.get('id');
+        
+        // 환율 정보 (USD to KRW)
+        const EXCHANGE_RATE = 1390; // 1달러 = 1350원 (필요시 수정)
 
         // 날짜가 유효 기간 내인지 확인
         function isValidPeriod(promotion) {
@@ -205,16 +208,16 @@
                                                 </code>
                                                 <div class="text-xs text-red-600 mt-2">${prices.bestCode.note}</div>
                                                 <div class="text-sm text-red-700 mt-1">
-                                                    ${prices.bestCode.min_price} 이상 구매 시 ${prices.bestCode.discount} 할인
+                                                    $${prices.bestCode.min_price} 이상 구매 시 $${prices.bestCode.discount} 할인
                                                 </div>
                                             </div>
-                                            <span class="text-xl font-bold text-red-700">-${prices.bestCode.discount}</span>
+                                            <span class="text-xl font-bold text-red-700">-$${prices.bestCode.discount}</span>
                                         </div>
                                     </div>
                                     
                                     <div class="flex justify-between items-center p-4 bg-green-50 rounded-lg border-2 border-green-400">
                                         <span class="text-green-800 font-bold text-lg">코드 적용 후 가격</span>
-                                        <span class="text-3xl font-bold text-green-700">${prices.afterCode.toFixed(2)}</span>
+                                        <span class="text-3xl font-bold text-green-700">$${prices.afterCode.toFixed(2)}</span>
                                     </div>
                                 ` : ''}
                             </div>
@@ -235,14 +238,14 @@
                                                         <div class="font-semibold text-purple-900">${card.card_name}</div>
                                                         <div class="text-xs text-purple-600 mt-1">${card.note}</div>
                                                         <div class="text-sm text-purple-700 mt-1">
-                                                            ${card.min_price} 이상 → 
+                                                            $${card.min_price} 이상 → 
                                                             <span class="font-bold text-purple-900">
-                                                                ${(prices.afterCode - card.discount).toFixed(2)}
+                                                                $${(prices.afterCode - card.discount).toFixed(2)}
                                                             </span>
                                                         </div>
                                                     </div>
                                                     <div class="text-right">
-                                                        <div class="text-lg font-bold text-purple-700">-${card.discount}</div>
+                                                        <div class="text-lg font-bold text-purple-700">-$${card.discount}</div>
                                                     </div>
                                                 </div>
                                             </div>
@@ -256,9 +259,9 @@
                                     <div class="text-center">
                                         <div class="text-sm text-blue-700 mb-1">최대 절약 가능 금액</div>
                                         <div class="text-3xl font-bold text-blue-700">
-                                            ${(prices.original - prices.afterCode).toFixed(2)}
+                                            $${(prices.original - prices.afterCode).toFixed(2)}
                                             ${prices.applicableCards.length > 0 ? `
-                                                <span class="text-lg">~ ${(prices.original - prices.afterCode + Math.max(...prices.applicableCards.map(c => c.discount))).toFixed(2)}</span>
+                                                <span class="text-lg">~ $${(prices.original - prices.afterCode + Math.max(...prices.applicableCards.map(c => c.discount))).toFixed(2)}</span>
                                             ` : ''}
                                         </div>
                                         <div class="text-sm text-blue-600 mt-1">
