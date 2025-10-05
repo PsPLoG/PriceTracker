@@ -16,7 +16,7 @@
         const params = new URLSearchParams(window.location.search);
         const blogId = params.get('id');
         
-        // 환율 정보 (USD to KRW) - 필요시 수정하세요
+        // 환율 설정 (USD to KRW)
         const EXCHANGE_RATE = 1390;
 
         // 날짜가 유효 기간 내인지 확인
@@ -70,6 +70,11 @@
             if (!dateStr) return '';
             const date = new Date(dateStr);
             return `${date.getMonth() + 1}/${date.getDate()}`;
+        }
+        
+        // 원화 표시
+        function toKRW(usd) {
+            return Math.round(usd * EXCHANGE_RATE).toLocaleString('ko-KR');
         }
 
         async function loadWidget() {
@@ -175,7 +180,7 @@
                             <div class="space-y-3 mb-6">
                                 <div class="flex justify-between items-center p-3 bg-gray-50 rounded-lg border border-gray-300">
                                     <span class="text-gray-600">정가</span>
-                                    <span class="text-xl font-bold text-gray-400 line-through">${prices.original.toFixed(2)}</span>
+                                    <span class="text-xl font-bold text-gray-400 line-through">$${prices.original.toFixed(2)}</span>
                                 </div>
                                 
                                 <div class="flex justify-between items-center p-3 bg-orange-50 rounded-lg border border-orange-300">
@@ -183,7 +188,7 @@
                                         <span class="text-orange-800 font-semibold">코인 ${product.coin_discount_percent}% 할인</span>
                                         <div class="text-xs text-orange-600">알리익스프레스 적립금 사용</div>
                                     </div>
-                                    <span class="text-xl font-bold text-orange-700">${prices.afterCoin.toFixed(2)}</span>
+                                    <span class="text-xl font-bold text-orange-700">$${prices.afterCoin.toFixed(2)}</span>
                                 </div>
                                 
                                 ${!hasDiscounts ? `
@@ -215,9 +220,14 @@
                                         </div>
                                     </div>
                                     
-                                    <div class="flex justify-between items-center p-4 bg-green-50 rounded-lg border-2 border-green-400">
-                                        <span class="text-green-800 font-bold text-lg">코드 적용 후 가격</span>
-                                        <span class="text-3xl font-bold text-green-700">$${prices.afterCode.toFixed(2)}</span>
+                                    <div class="p-4 bg-green-50 rounded-lg border-2 border-green-400">
+                                        <div class="flex justify-between items-center">
+                                            <span class="text-green-800 font-bold text-lg">코드 적용 후 가격</span>
+                                            <div class="text-right">
+                                                <div class="text-3xl font-bold text-green-700">$${prices.afterCode.toFixed(2)}</div>
+                                                <div class="text-sm text-green-600 mt-1">약 ${toKRW(prices.afterCode)}원</div>
+                                            </div>
+                                        </div>
                                     </div>
                                 ` : ''}
                             </div>
@@ -231,7 +241,9 @@
                                         추가 카드 할인
                                     </h3>
                                     <div class="space-y-2">
-                                        ${prices.applicableCards.map(card => `
+                                        ${prices.applicableCards.map(card => {
+                                            const finalPrice = prices.afterCode - card.discount;
+                                            return `
                                             <div class="p-3 bg-purple-50 rounded-lg border border-purple-300">
                                                 <div class="flex justify-between items-center">
                                                     <div class="flex-1">
@@ -240,8 +252,11 @@
                                                         <div class="text-sm text-purple-700 mt-1">
                                                             $${card.min_price} 이상 → 
                                                             <span class="font-bold text-purple-900">
-                                                                $${(prices.afterCode - card.discount).toFixed(2)}
+                                                                $${finalPrice.toFixed(2)}
                                                             </span>
+                                                            <div class="text-xs text-purple-600 mt-0.5">
+                                                                (약 ${toKRW(finalPrice)}원)
+                                                            </div>
                                                         </div>
                                                     </div>
                                                     <div class="text-right">
@@ -249,7 +264,8 @@
                                                     </div>
                                                 </div>
                                             </div>
-                                        `).join('')}
+                                        `;
+                                        }).join('')}
                                     </div>
                                 </div>
                             ` : ''}
@@ -284,6 +300,7 @@
                             <div class="mt-4 pt-4 border-t border-gray-200 text-xs text-gray-500 text-center">
                                 ${hasDiscounts ? '<div>💡 체크아웃 시 위 할인 코드를 입력하고 해당 카드로 결제하세요</div>' : ''}
                                 <div class="mt-2">마지막 업데이트: ${new Date(product.last_updated).toLocaleString('ko-KR')}</div>
+                                <div class="text-xs text-gray-400 mt-1">환율: 1달러 = ${EXCHANGE_RATE}원 기준</div>
                             </div>
                         </div>
                     </div>
@@ -303,8 +320,6 @@
             }
         }
 
-        loadWidget();
-
         // iframe 높이 자동 조절
         function updateIframeHeight() {
             try {
@@ -319,8 +334,6 @@
                     type: 'resize',
                     height: height
                 }, '*');
-                
-                console.log('Height sent:', height);
             } catch (e) {
                 console.error('Height update failed:', e);
             }
@@ -330,7 +343,6 @@
         async function waitForLoad() {
             await loadWidget();
             
-            // 여러 번 체크
             setTimeout(updateIframeHeight, 100);
             setTimeout(updateIframeHeight, 300);
             setTimeout(updateIframeHeight, 500);
@@ -339,10 +351,7 @@
 
         waitForLoad();
 
-        // 창 크기 변경 시에도 업데이트
         window.addEventListener('resize', updateIframeHeight);
-        
-        // 이미지 로드 완료 시에도 업데이트
         window.addEventListener('load', () => {
             setTimeout(updateIframeHeight, 500);
         });
