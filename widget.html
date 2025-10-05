@@ -5,23 +5,30 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>가격 위젯</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body {
+            background: transparent;
+        }
+    </style>
 </head>
-<body class="bg-transparent">
+<body>
     <div id="widget-container" class="max-w-md mx-auto p-4"></div>
 
     <script>
-        // URL 파라미터에서 블로그 ID 가져오기
         const params = new URLSearchParams(window.location.search);
         const blogId = params.get('id');
 
         async function loadWidget() {
             const container = document.getElementById('widget-container');
 
+            // ID 체크
             if (!blogId) {
                 container.innerHTML = `
                     <div class="p-4 bg-red-50 border-2 border-red-200 rounded-lg">
                         <div class="flex items-center text-red-700">
-                            <span class="mr-2">⚠️</span>
+                            <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/>
+                            </svg>
                             <span>블로그 게시글 ID가 필요합니다. ?id=blog-post-1 형식으로 접근해주세요.</span>
                         </div>
                     </div>
@@ -29,9 +36,20 @@
                 return;
             }
 
+            // 로딩 표시
+            container.innerHTML = `
+                <div class="flex items-center justify-center p-6 bg-gradient-to-br from-orange-50 to-red-50 rounded-lg">
+                    <div class="flex items-center">
+                        <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-orange-500"></div>
+                        <span class="ml-3 text-gray-600">가격 정보 로딩중...</span>
+                    </div>
+                </div>
+            `;
+
             try {
-                // products.json 파일 로드
+                // products.json 로드
                 const response = await fetch('products.json');
+                
                 if (!response.ok) {
                     throw new Error('products.json 파일을 찾을 수 없습니다.');
                 }
@@ -56,11 +74,13 @@
                 const savingsPercent = ((product.current_price - finalPrice) / product.current_price * 100).toFixed(0);
                 const savingsAmount = (product.current_price - finalPrice).toFixed(2);
                 
+                // 위젯 렌더링
                 container.innerHTML = `
                     <div class="bg-white rounded-xl shadow-lg border-2 border-orange-200 overflow-hidden">
                         ${product.image ? `
                             <div class="w-full h-48 bg-gray-100">
-                                <img src="${product.image}" alt="${product.name}" 
+                                <img src="${product.image}" 
+                                     alt="${product.name}" 
                                      class="w-full h-full object-cover"
                                      onerror="this.style.display='none'">
                             </div>
@@ -73,7 +93,9 @@
                             <!-- 정가 -->
                             <div class="mb-3">
                                 <div class="flex items-center text-sm text-gray-500 mb-1">
-                                    <span class="mr-1">💵</span>
+                                    <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                                    </svg>
                                     <span>정가</span>
                                 </div>
                                 <div class="text-2xl font-bold text-gray-400 line-through">
@@ -93,7 +115,9 @@
                             <div class="mb-4 p-4 bg-gradient-to-r from-orange-100 to-red-100 rounded-lg border-2 border-dashed border-orange-300">
                                 <div class="flex items-center justify-between mb-2">
                                     <div class="flex items-center">
-                                        <span class="mr-2">🏷️</span>
+                                        <svg class="w-5 h-5 text-orange-600 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z"/>
+                                        </svg>
                                         <span class="font-semibold text-orange-800">쿠폰 코드</span>
                                     </div>
                                     <code class="px-3 py-1 bg-white rounded font-mono text-sm font-bold text-orange-600 border border-orange-300 select-all">
@@ -110,7 +134,9 @@
                             <!-- 최종 가격 -->
                             <div class="mb-4 p-4 bg-green-50 rounded-lg border-2 border-green-200">
                                 <div class="flex items-center text-sm text-gray-700 mb-2">
-                                    <span class="mr-1">🛒</span>
+                                    <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"/>
+                                    </svg>
                                     <span class="font-semibold">쿠폰 적용 시 최종 가격</span>
                                 </div>
                                 <div class="flex items-baseline justify-between">
@@ -133,7 +159,9 @@
                                target="_blank" 
                                rel="noopener noreferrer"
                                class="flex items-center justify-center gap-2 w-full py-3 bg-gradient-to-r from-orange-500 to-red-500 hover:from-orange-600 hover:to-red-600 text-white font-bold rounded-lg transition-all transform hover:scale-105 shadow-md">
-                                <span>🔗</span>
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"/>
+                                </svg>
                                 알리익스프레스에서 구매하기
                             </a>
                             
@@ -146,11 +174,14 @@
                         </div>
                     </div>
                 `;
+                
             } catch (error) {
                 container.innerHTML = `
                     <div class="p-4 bg-red-50 border-2 border-red-200 rounded-lg">
                         <div class="flex items-center text-red-700">
-                            <span class="mr-2">❌</span>
+                            <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+                            </svg>
                             <span>${error.message}</span>
                         </div>
                     </div>
