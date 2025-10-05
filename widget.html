@@ -18,7 +18,7 @@
 
         // 날짜가 유효 기간 내인지 확인
         function isValidPeriod(promotion) {
-            if (!promotion || !promotion.start_date || !promotion.end_date) return true;
+            if (!promotion || !promotion.start_date || !promotion.end_date) return false;
             const now = new Date();
             const start = new Date(promotion.start_date);
             const end = new Date(promotion.end_date);
@@ -93,7 +93,7 @@
 
             try {
                 const [productsRes, couponsRes] = await Promise.all([
-                    fetch('products.json'),
+                    fetch('https://script.google.com/macros/s/AKfycbz212-fFlsx7ZOR9Icv0i_eA7yTcghVKRU1dsXcOUq-U07CWR9aEPanATJ2XF6Mbq7QYg/exec'),
                     fetch('coupons.json')
                 ]);
                 
@@ -108,7 +108,7 @@
                     throw new Error(`ID "${blogId}"에 해당하는 상품을 찾을 수 없습니다.`);
                 }
 
-                // 쿠폰 데이터 처리 (없거나 비어있을 수 있음)
+                // 쿠폰 데이터 처리
                 let couponsData = { promotion: null, discount_codes: [], card_discounts: [] };
                 let isPromotionValid = false;
                 
@@ -116,7 +116,6 @@
                     try {
                         const data = await couponsRes.json();
                         
-                        // 프로모션 기간 확인
                         if (data.promotion) {
                             isPromotionValid = isValidPeriod(data.promotion);
                             if (isPromotionValid) {
@@ -126,7 +125,7 @@
                             }
                         }
                     } catch (e) {
-                        console.log('쿠폰 파일 파싱 실패, 빈 데이터 사용');
+                        console.log('쿠폰 파일 파싱 실패');
                     }
                 }
                 
@@ -134,9 +133,9 @@
                 const hasDiscounts = isPromotionValid && (prices.bestCode || prices.applicableCards.length > 0);
                 
                 container.innerHTML = `
-                    <div class="bg-gray-900 rounded-xl shadow-2xl border-2 border-gray-700 overflow-hidden">
+                    <div class="bg-white rounded-xl shadow-2xl border-2 border-gray-300 overflow-hidden">
                         ${product.image ? `
-                            <div class="w-full h-56 bg-gray-800">
+                            <div class="w-full h-56 bg-gray-100">
                                 <img src="${product.image}" 
                                      alt="${product.name}" 
                                      class="w-full h-full object-cover"
@@ -146,22 +145,22 @@
                         
                         <div class="p-6">
                             ${couponsData.promotion && isPromotionValid ? `
-                                <div class="mb-4 p-3 bg-gradient-to-r from-orange-900 to-red-900 rounded-lg border-2 border-orange-600 text-center">
-                                    <div class="text-orange-300 font-bold text-lg">🎉 ${couponsData.promotion.name}</div>
-                                    <div class="text-orange-400 text-sm mt-1">
+                                <div class="mb-4 p-3 bg-gradient-to-r from-orange-50 to-red-50 rounded-lg border-2 border-orange-400 text-center">
+                                    <div class="text-orange-700 font-bold text-lg">🎉 ${couponsData.promotion.name}</div>
+                                    <div class="text-orange-600 text-sm mt-1">
                                         ${formatDate(couponsData.promotion.start_date)} ~ ${formatDate(couponsData.promotion.end_date)}
                                     </div>
                                 </div>
                             ` : ''}
                             
-                            <h2 class="text-2xl font-bold text-gray-100 mb-4">${product.name}</h2>
+                            <h2 class="text-2xl font-bold text-gray-800 mb-4">${product.name}</h2>
                             
                             <div class="mb-4 flex flex-wrap gap-2">
                                 ${product.links.map((link, idx) => `
                                     <a href="${link}" 
                                        target="_blank" 
                                        rel="noopener noreferrer"
-                                       class="inline-flex items-center px-3 py-1 bg-gray-800 text-blue-400 rounded-full text-sm hover:bg-gray-700 transition-colors border border-gray-600">
+                                       class="inline-flex items-center px-3 py-1 bg-blue-50 text-blue-700 rounded-full text-sm hover:bg-blue-100 transition-colors border border-blue-300">
                                         <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"/>
                                         </svg>
@@ -171,58 +170,58 @@
                             </div>
                             
                             <div class="space-y-3 mb-6">
-                                <div class="flex justify-between items-center p-3 bg-gray-800 rounded-lg border border-gray-700">
-                                    <span class="text-gray-400">정가</span>
-                                    <span class="text-xl font-bold text-gray-500 line-through">$${prices.original.toFixed(2)}</span>
+                                <div class="flex justify-between items-center p-3 bg-gray-50 rounded-lg border border-gray-300">
+                                    <span class="text-gray-600">정가</span>
+                                    <span class="text-xl font-bold text-gray-400 line-through">${prices.original.toFixed(2)}</span>
                                 </div>
                                 
-                                <div class="flex justify-between items-center p-3 bg-orange-950 rounded-lg border border-orange-800">
+                                <div class="flex justify-between items-center p-3 bg-orange-50 rounded-lg border border-orange-300">
                                     <div>
-                                        <span class="text-orange-300 font-semibold">코인 ${product.coin_discount_percent}% 할인</span>
-                                        <div class="text-xs text-orange-400">알리익스프레스 적립금 사용</div>
+                                        <span class="text-orange-800 font-semibold">코인 ${product.coin_discount_percent}% 할인</span>
+                                        <div class="text-xs text-orange-600">알리익스프레스 적립금 사용</div>
                                     </div>
-                                    <span class="text-xl font-bold text-orange-400">$${prices.afterCoin.toFixed(2)}</span>
+                                    <span class="text-xl font-bold text-orange-700">${prices.afterCoin.toFixed(2)}</span>
                                 </div>
                                 
                                 ${!hasDiscounts ? `
-                                    <div class="p-6 bg-gray-800 rounded-lg border-2 border-gray-700 text-center">
-                                        <div class="text-gray-400 text-lg font-semibold mb-2">😔 현재는 할인이 없습니다</div>
+                                    <div class="p-6 bg-gray-50 rounded-lg border-2 border-gray-300 text-center">
+                                        <div class="text-gray-600 text-lg font-semibold mb-2">😔 현재는 할인이 없습니다</div>
                                         <div class="text-gray-500 text-sm">다음 프로모션을 기대해주세요!</div>
                                     </div>
                                 ` : ''}
                                 
                                 ${prices.bestCode ? `
-                                    <div class="p-4 bg-gradient-to-r from-red-950 to-pink-950 rounded-lg border-2 border-dashed border-red-700">
+                                    <div class="p-4 bg-gradient-to-r from-red-50 to-pink-50 rounded-lg border-2 border-dashed border-red-400">
                                         <div class="flex justify-between items-start mb-3">
                                             <div class="flex-1">
                                                 <div class="flex items-center gap-2 mb-2">
-                                                    <svg class="w-5 h-5 text-red-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                    <svg class="w-5 h-5 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z"/>
                                                     </svg>
-                                                    <span class="font-bold text-red-300">할인 코드</span>
+                                                    <span class="font-bold text-red-800">할인 코드</span>
                                                 </div>
-                                                <code class="inline-block px-3 py-1 bg-gray-900 rounded font-mono text-sm font-bold text-red-400 border border-red-700 select-all">
+                                                <code class="inline-block px-3 py-1 bg-white rounded font-mono text-sm font-bold text-red-600 border border-red-400 select-all">
                                                     ${prices.bestCode.code}
                                                 </code>
-                                                <div class="text-xs text-red-400 mt-2">${prices.bestCode.note}</div>
-                                                <div class="text-sm text-red-300 mt-1">
+                                                <div class="text-xs text-red-600 mt-2">${prices.bestCode.note}</div>
+                                                <div class="text-sm text-red-700 mt-1">
                                                     ${prices.bestCode.min_price} 이상 구매 시 ${prices.bestCode.discount} 할인
                                                 </div>
                                             </div>
-                                            <span class="text-xl font-bold text-red-400">-${prices.bestCode.discount}</span>
+                                            <span class="text-xl font-bold text-red-700">-${prices.bestCode.discount}</span>
                                         </div>
                                     </div>
                                     
-                                    <div class="flex justify-between items-center p-4 bg-green-950 rounded-lg border-2 border-green-700">
-                                        <span class="text-green-300 font-bold text-lg">코드 적용 후 가격</span>
-                                        <span class="text-3xl font-bold text-green-400">$${prices.afterCode.toFixed(2)}</span>
+                                    <div class="flex justify-between items-center p-4 bg-green-50 rounded-lg border-2 border-green-400">
+                                        <span class="text-green-800 font-bold text-lg">코드 적용 후 가격</span>
+                                        <span class="text-3xl font-bold text-green-700">${prices.afterCode.toFixed(2)}</span>
                                     </div>
                                 ` : ''}
                             </div>
                             
                             ${prices.applicableCards.length > 0 ? `
                                 <div class="mb-6">
-                                    <h3 class="font-bold text-lg mb-3 flex items-center text-purple-300">
+                                    <h3 class="font-bold text-lg mb-3 flex items-center text-purple-700">
                                         <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z"/>
                                         </svg>
@@ -230,20 +229,20 @@
                                     </h3>
                                     <div class="space-y-2">
                                         ${prices.applicableCards.map(card => `
-                                            <div class="p-3 bg-purple-950 rounded-lg border border-purple-800">
+                                            <div class="p-3 bg-purple-50 rounded-lg border border-purple-300">
                                                 <div class="flex justify-between items-center">
                                                     <div class="flex-1">
-                                                        <div class="font-semibold text-purple-300">${card.card_name}</div>
-                                                        <div class="text-xs text-purple-400 mt-1">${card.note}</div>
-                                                        <div class="text-sm text-purple-300 mt-1">
+                                                        <div class="font-semibold text-purple-900">${card.card_name}</div>
+                                                        <div class="text-xs text-purple-600 mt-1">${card.note}</div>
+                                                        <div class="text-sm text-purple-700 mt-1">
                                                             ${card.min_price} 이상 → 
-                                                            <span class="font-bold text-purple-200">
+                                                            <span class="font-bold text-purple-900">
                                                                 ${(prices.afterCode - card.discount).toFixed(2)}
                                                             </span>
                                                         </div>
                                                     </div>
                                                     <div class="text-right">
-                                                        <div class="text-lg font-bold text-purple-400">-${card.discount}</div>
+                                                        <div class="text-lg font-bold text-purple-700">-${card.discount}</div>
                                                     </div>
                                                 </div>
                                             </div>
@@ -253,16 +252,16 @@
                             ` : ''}
                             
                             ${hasDiscounts ? `
-                                <div class="p-4 bg-gradient-to-r from-blue-950 to-indigo-950 rounded-lg border-2 border-blue-700 mb-4">
+                                <div class="p-4 bg-gradient-to-r from-blue-50 to-indigo-50 rounded-lg border-2 border-blue-400 mb-4">
                                     <div class="text-center">
-                                        <div class="text-sm text-blue-300 mb-1">최대 절약 가능 금액</div>
-                                        <div class="text-3xl font-bold text-blue-400">
-                                            $${(prices.original - prices.afterCode).toFixed(2)}
+                                        <div class="text-sm text-blue-700 mb-1">최대 절약 가능 금액</div>
+                                        <div class="text-3xl font-bold text-blue-700">
+                                            ${(prices.original - prices.afterCode).toFixed(2)}
                                             ${prices.applicableCards.length > 0 ? `
-                                                <span class="text-lg">~ $${(prices.original - prices.afterCode + Math.max(...prices.applicableCards.map(c => c.discount))).toFixed(2)}</span>
+                                                <span class="text-lg">~ ${(prices.original - prices.afterCode + Math.max(...prices.applicableCards.map(c => c.discount))).toFixed(2)}</span>
                                             ` : ''}
                                         </div>
-                                        <div class="text-sm text-blue-300 mt-1">
+                                        <div class="text-sm text-blue-600 mt-1">
                                             ${((prices.original - prices.afterCode) / prices.original * 100).toFixed(0)}% 할인
                                         </div>
                                     </div>
@@ -272,14 +271,14 @@
                             <a href="${product.links[0]}" 
                                target="_blank" 
                                rel="noopener noreferrer"
-                               class="flex items-center justify-center gap-2 w-full py-4 bg-gradient-to-r from-orange-600 to-red-600 hover:from-orange-700 hover:to-red-700 text-white font-bold rounded-lg transition-all transform hover:scale-105 shadow-lg text-lg">
+                               class="flex items-center justify-center gap-2 w-full py-4 bg-gradient-to-r from-orange-500 to-red-500 hover:from-orange-600 hover:to-red-600 text-white font-bold rounded-lg transition-all transform hover:scale-105 shadow-lg text-lg">
                                 <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"/>
                                 </svg>
                                 알리익스프레스에서 구매하기
                             </a>
                             
-                            <div class="mt-4 pt-4 border-t border-gray-700 text-xs text-gray-500 text-center">
+                            <div class="mt-4 pt-4 border-t border-gray-200 text-xs text-gray-500 text-center">
                                 ${hasDiscounts ? '<div>💡 체크아웃 시 위 할인 코드를 입력하고 해당 카드로 결제하세요</div>' : ''}
                                 <div class="mt-2">마지막 업데이트: ${new Date(product.last_updated).toLocaleString('ko-KR')}</div>
                             </div>
