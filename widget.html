@@ -16,8 +16,8 @@
         const params = new URLSearchParams(window.location.search);
         const blogId = params.get('id');
         
-        // 환율 정보 (USD to KRW)
-        const EXCHANGE_RATE = 1390; // 1달러 = 1350원 (필요시 수정)
+        // 환율 정보 (USD to KRW) - 필요시 수정하세요
+        const EXCHANGE_RATE = 1390;
 
         // 날짜가 유효 기간 내인지 확인
         function isValidPeriod(promotion) {
