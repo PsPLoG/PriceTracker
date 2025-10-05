@@ -268,6 +268,25 @@
         }
 
         loadWidget();
+
+        // iframe 높이 자동 조절
+        function updateIframeHeight() {
+            const height = document.documentElement.scrollHeight;
+            window.parent.postMessage({
+                type: 'resize',
+                height: height
+            }, '*');
+        }
+
+        // 위젯 로드 후 높이 전송
+        window.addEventListener('load', () => {
+            updateIframeHeight();
+            // 이미지 로드 후에도 다시 체크
+            setTimeout(updateIframeHeight, 500);
+        });
+
+        // 창 크기 변경 시에도 업데이트
+        window.addEventListener('resize', updateIframeHeight);
     </script>
 </body>
 </html>
