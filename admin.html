@@ -1,0 +1,391 @@
+import React, { useState, useEffect } from 'react';
+import { Plus, Download, Upload, Trash2, RefreshCw, ExternalLink } from 'lucide-react';
+
+function AdminTool() {
+  const [products, setProducts] = useState({});
+  const [formData, setFormData] = useState({
+    blogId: '',
+    name: '',
+    url: '',
+    originalPrice: '',
+    currentPrice: '',
+    image: '',
+    couponCode: '',
+    couponDiscount: '',
+    couponType: 'percent'
+  });
+
+  // 로컬 스토리지에서 데이터 로드
+  useEffect(() => {
+    const saved = localStorage.getItem('aliexpress_products');
+    if (saved) {
+      try {
+        const parsed = JSON.parse(saved);
+        setProducts(parsed.products || {});
+      } catch (e) {
+        console.error('Failed to load data:', e);
+      }
+    }
+  }, []);
+
+  // 데이터 저장
+  const saveData = (newProducts) => {
+    const data = { products: newProducts };
+    localStorage.setItem('aliexpress_products', JSON.stringify(data));
+    setProducts(newProducts);
+  };
+
+  // 최종 가격 계산
+  const calculateFinalPrice = (currentPrice, coupon) => {
+    if (coupon.type === 'percent') {
+      return currentPrice * (1 - coupon.discount / 100);
+    }
+    return currentPrice - coupon.discount;
+  };
+
+  // 상품 추가
+  const handleAddProduct = () => {
+    if (!formData.blogId || !formData.name || !formData.url || 
+        !formData.originalPrice || !formData.currentPrice || 
+        !formData.couponCode || !formData.couponDiscount) {
+      alert('❌ 모든 필수 항목을 입력해주세요.');
+      return;
+    }
+    
+    const currentPrice = parseFloat(formData.currentPrice);
+    const discount = parseFloat(formData.couponDiscount);
+    
+    const coupon = {
+      code: formData.couponCode,
+      discount: discount,
+      type: formData.couponType
+    };
+    
+    const finalPrice = calculateFinalPrice(currentPrice, coupon);
+    
+    const newProduct = {
+      name: formData.name,
+      url: formData.url,
+      original_price: parseFloat(formData.originalPrice),
+      current_price: currentPrice,
+      final_price: Math.max(0, finalPrice),
+      currency: 'USD',
+      coupon: coupon,
+      image: formData.image,
+      last_updated: new Date().toISOString()
+    };
+    
+    const newProducts = { ...products, [formData.blogId]: newProduct };
+    saveData(newProducts);
+    
+    // 폼 초기화
+    setFormData({
+      blogId: '',
+      name: '',
+      url: '',
+      originalPrice: '',
+      currentPrice: '',
+      image: '',
+      couponCode: '',
+      couponDiscount: '',
+      couponType: 'percent'
+    });
+    
+    alert('✅ 상품이 추가되었습니다!');
+  };
+
+  // 가격 업데이트
+  const updatePrice = (blogId) => {
+    const product = products[blogId];
+    const newPrice = prompt(`새 가격을 입력하세요 (현재: $${product.current_price})`, product.current_price);
+    
+    if (newPrice && !isNaN(newPrice)) {
+      const currentPrice = parseFloat(newPrice);
+      const finalPrice = calculateFinalPrice(currentPrice, product.coupon);
+      
+      const updatedProduct = {
+        ...product,
+        current_price: currentPrice,
+        final_price: finalPrice,
+        last_updated: new Date().toISOString()
+      };
+      
+      const newProducts = { ...products, [blogId]: updatedProduct };
+      saveData(newProducts);
+      alert('✅ 가격이 업데이트되었습니다!');
+    }
+  };
+
+  // 상품 삭제
+  const deleteProduct = (blogId) => {
+    if (confirm(`"${products[blogId].name}"를 삭제하시겠습니까?`)) {
+      const newProducts = { ...products };
+      delete newProducts[blogId];
+      saveData(newProducts);
+    }
+  };
+
+  // JSON 다운로드
+  const downloadJSON = () => {
+    const data = { products };
+    const dataStr = JSON.stringify(data, null, 2);
+    const dataBlob = new Blob([dataStr], { type: 'application/json' });
+    const url = URL.createObjectURL(dataBlob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = 'products.json';
+    link.click();
+    URL.revokeObjectURL(url);
+  };
+
+  // JSON 업로드
+  const handleFileUpload = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onload = (event) => {
+        try {
+          const parsed = JSON.parse(event.target.result);
+          setProducts(parsed.products || {});
+          localStorage.setItem('aliexpress_products', event.target.result);
+          alert('✅ 데이터를 성공적으로 불러왔습니다!');
+        } catch (error) {
+          alert('❌ JSON 파일을 읽는 중 오류가 발생했습니다.');
+        }
+      };
+      reader.readAsText(file);
+    }
+  };
+
+  return (
+    <div className="min-h-screen bg-gray-100 p-6">
+      <div className="max-w-6xl mx-auto">
+        <h1 className="text-3xl font-bold text-gray-800 mb-6">🛠️ 알리익스프레스 가격 관리 툴</h1>
+        
+        {/* 새 상품 추가 */}
+        <div className="bg-white rounded-lg shadow-lg p-6 mb-6">
+          <h2 className="text-xl font-bold mb-4">새 상품 추가</h2>
+          <div className="space-y-4">
+            <div className="grid grid-cols-2 gap-4">
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">블로그 게시글 ID</label>
+                <input
+                  type="text"
+                  value={formData.blogId}
+                  onChange={(e) => setFormData({...formData, blogId: e.target.value})}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:outline-none"
+                  placeholder="예: blog-post-1"
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">상품명</label>
+                <input
+                  type="text"
+                  value={formData.name}
+                  onChange={(e) => setFormData({...formData, name: e.target.value})}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:outline-none"
+                  placeholder="예: 블루투스 이어폰"
+                />
+              </div>
+            </div>
+            
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">알리익스프레스 URL</label>
+              <input
+                type="url"
+                value={formData.url}
+                onChange={(e) => setFormData({...formData, url: e.target.value})}
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:outline-none"
+                placeholder="https://www.aliexpress.com/item/..."
+              />
+            </div>
+            
+            <div className="grid grid-cols-3 gap-4">
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">정가 ($)</label>
+                <input
+                  type="number"
+                  step="0.01"
+                  value={formData.originalPrice}
+                  onChange={(e) => setFormData({...formData, originalPrice: e.target.value})}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:outline-none"
+                  placeholder="89.99"
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">현재가 ($)</label>
+                <input
+                  type="number"
+                  step="0.01"
+                  value={formData.currentPrice}
+                  onChange={(e) => setFormData({...formData, currentPrice: e.target.value})}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:outline-none"
+                  placeholder="79.99"
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">이미지 URL (선택)</label>
+                <input
+                  type="url"
+                  value={formData.image}
+                  onChange={(e) => setFormData({...formData, image: e.target.value})}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:outline-none"
+                  placeholder="https://..."
+                />
+              </div>
+            </div>
+            
+            <div className="grid grid-cols-3 gap-4">
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">쿠폰 코드</label>
+                <input
+                  type="text"
+                  value={formData.couponCode}
+                  onChange={(e) => setFormData({...formData, couponCode: e.target.value})}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:outline-none"
+                  placeholder="TECH20"
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">할인 값</label>
+                <input
+                  type="number"
+                  step="0.01"
+                  value={formData.couponDiscount}
+                  onChange={(e) => setFormData({...formData, couponDiscount: e.target.value})}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:outline-none"
+                  placeholder="20"
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">할인 타입</label>
+                <select
+                  value={formData.couponType}
+                  onChange={(e) => setFormData({...formData, couponType: e.target.value})}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:outline-none"
+                >
+                  <option value="percent">퍼센트 (%)</option>
+                  <option value="fixed">고정 금액 ($)</option>
+                </select>
+              </div>
+            </div>
+            
+            <button
+              onClick={handleAddProduct}
+              className="w-full bg-orange-500 hover:bg-orange-600 text-white font-bold py-3 rounded-lg transition-colors flex items-center justify-center gap-2"
+            >
+              <Plus className="w-5 h-5" />
+              상품 추가
+            </button>
+          </div>
+        </div>
+        
+        {/* 상품 목록 */}
+        <div className="bg-white rounded-lg shadow-lg p-6 mb-6">
+          <div className="flex justify-between items-center mb-4">
+            <h2 className="text-xl font-bold">📦 상품 목록 ({Object.keys(products).length}개)</h2>
+            <button
+              onClick={downloadJSON}
+              className="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-lg font-medium transition-colors flex items-center gap-2"
+            >
+              <Download className="w-4 h-4" />
+              JSON 다운로드
+            </button>
+          </div>
+          
+          {Object.keys(products).length === 0 ? (
+            <p className="text-gray-500 text-center py-8">등록된 상품이 없습니다.</p>
+          ) : (
+            <div className="space-y-4">
+              {Object.entries(products).map(([id, product]) => {
+                const finalPrice = product.final_price || calculateFinalPrice(product.current_price, product.coupon);
+                const savings = ((product.current_price - finalPrice) / product.current_price * 100).toFixed(0);
+                
+                return (
+                  <div key={id} className="border border-gray-200 rounded-lg p-4 hover:shadow-md transition-shadow">
+                    <div className="flex justify-between items-start mb-3">
+                      <div className="flex-1">
+                        <div className="flex items-center gap-2 mb-1">
+                          <span className="bg-orange-100 text-orange-800 text-xs font-bold px-2 py-1 rounded">
+                            {id}
+                          </span>
+                          <h3 className="font-bold text-lg">{product.name}</h3>
+                        </div>
+                        <a
+                          href={product.url}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="text-blue-600 hover:underline text-sm flex items-center gap-1"
+                        >
+                          <ExternalLink className="w-3 h-3" />
+                          알리익스프레스 링크
+                        </a>
+                      </div>
+                      <button
+                        onClick={() => deleteProduct(id)}
+                        className="text-red-500 hover:text-red-700"
+                      >
+                        <Trash2 className="w-5 h-5" />
+                      </button>
+                    </div>
+                    
+                    <div className="grid grid-cols-4 gap-3 text-sm mb-3">
+                      <div>
+                        <div className="text-gray-500">정가</div>
+                        <div className="font-bold text-gray-400 line-through">${product.original_price.toFixed(2)}</div>
+                      </div>
+                      <div>
+                        <div className="text-gray-500">현재가</div>
+                        <div className="font-bold">${product.current_price.toFixed(2)}</div>
+                      </div>
+                      <div>
+                        <div className="text-gray-500">쿠폰</div>
+                        <div className="font-bold text-orange-600">{product.coupon.code}</div>
+                        <div className="text-xs text-gray-500">
+                          {product.coupon.type === 'percent' ? `${product.coupon.discount}%` : `${product.coupon.discount}`}
+                        </div>
+                      </div>
+                      <div>
+                        <div className="text-gray-500">최종가</div>
+                        <div className="font-bold text-green-600">${finalPrice.toFixed(2)}</div>
+                        <div className="text-xs text-red-500">{savings}% 절약</div>
+                      </div>
+                    </div>
+                    
+                    <div className="text-xs text-gray-400 mb-3">
+                      마지막 업데이트: {new Date(product.last_updated).toLocaleString('ko-KR')}
+                    </div>
+                    
+                    <button
+                      onClick={() => updatePrice(id)}
+                      className="w-full bg-blue-500 hover:bg-blue-600 text-white px-3 py-2 rounded text-sm font-medium transition-colors flex items-center justify-center gap-2"
+                    >
+                      <RefreshCw className="w-4 h-4" />
+                      가격 업데이트
+                    </button>
+                  </div>
+                );
+              })}
+            </div>
+          )}
+        </div>
+        
+        {/* JSON 업로드 */}
+        <div className="bg-white rounded-lg shadow-lg p-6">
+          <h2 className="text-xl font-bold mb-4">📤 JSON 업로드 (기존 데이터 복원)</h2>
+          <div className="flex items-center gap-2">
+            <Upload className="w-5 h-5 text-gray-500" />
+            <input
+              type="file"
+              accept=".json"
+              onChange={handleFileUpload}
+              className="flex-1 px-3 py-2 border border-gray-300 rounded-lg"
+            />
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+export default AdminTool;
