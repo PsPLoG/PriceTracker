@@ -154,7 +154,7 @@
                         <div class="p-6">
                             ${couponsData.promotion && isPromotionValid ? `
                                 <div class="mb-4 p-3 mobile-p-3 bg-gradient-to-r from-orange-50 to-red-50 rounded-lg border-2 border-orange-400 text-center">
-                                    <div class="text-orange-700 font-bold text-lg mobile-text-base">🎉 ${couponsData.promotion.name}</div>
+                                    <div class="text-orange-700 font-bold text-lg mobile-text-base">${couponsData.promotion.name}</div>
                                     <div class="text-orange-600 text-sm mobile-text-sm mt-1">${formatDate(couponsData.promotion.start_date)} ~ ${formatDate(couponsData.promotion.end_date)}</div>
                                 </div>
                             ` : ''}
@@ -183,7 +183,7 @@
                                         <div>
                                             <span class="text-orange-800 font-semibold mobile-text-sm">코인 ${product.coin_discount_percent}% 할인</span>
                                             <div class="text-xs mobile-text-sm text-orange-600">
-                                                알리 적립금 사용 <span class="font-semibold">(${prices.coinAmount.toLocaleString('ko-KR')}개 필요)</span>
+                                                알리 코인 사용 <span class="font-semibold">(약 ${prices.coinAmount.toLocaleString('ko-KR')}개 필요)</span>
                                             </div>
                                         </div>
                                         <span class="text-xl mobile-text-lg font-bold text-orange-700">$${prices.afterCoin.toFixed(2)}</span>
@@ -192,7 +192,7 @@
                                 
                                 ${!hasDiscounts ? `
                                     <div class="p-6 bg-gray-50 rounded-lg border-2 border-gray-300 text-center">
-                                        <div class="text-gray-600 text-lg font-semibold mb-2">😔 현재는 할인이 없습니다</div>
+                                        <div class="text-gray-600 text-lg font-semibold mb-2">현재는 할인이 없습니다</div>
                                         <div class="text-gray-500 text-sm">다음 프로모션을 기대해주세요!</div>
                                     </div>
                                 ` : ''}
@@ -281,7 +281,7 @@
                             </a>
                             
                             <div class="mt-4 pt-4 border-t border-gray-200 text-xs text-gray-500 text-center">
-                                ${hasDiscounts ? '<div>💡 체크아웃 시 위 할인 코드를 입력하고 해당 카드로 결제하세요</div>' : ''}
+                                ${hasDiscounts ? '<div>💡 결제 시 위 할인 코드를 입력하고 해당 카드로 결제하세요</div>' : ''}
                                 <div class="mt-2">마지막 업데이트: ${new Date(product.last_updated).toLocaleString('ko-KR')}</div>
                                 <div class="text-xs text-gray-400 mt-1">환율: 1달러 = ${EXCHANGE_RATE}원 | 코인: 1개 = $${COIN_VALUE}</div>
                             </div>
