@@ -1,5 +1,5 @@
 ```
-<div style="max-width: 800px; margin: 20px auto;">
+<div class="price-widget-wrap">
     <iframe 
         id="priceWidget1"
         src="https://psplog.github.io/PriceTracker/widget.html?id=1"
