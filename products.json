@@ -1,0 +1,15 @@
+{
+  "products": {
+    "test": {
+      "name": "에어팟 프로 2세대",
+      "links": [
+        "https://www.aliexpress.com/item/xxx.html",
+        "https://ko.aliexpress.com/item/xxx.html"
+      ],
+      "original_price": 159.99,
+      "coin_discount_percent": 20,
+      "image": "https://...",
+      "last_updated": "2025-10-05T10:00:00Z"
+    }
+  }
+}
