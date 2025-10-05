@@ -1,4 +1,9 @@
 {
+  "promotion": {
+    "name": "가을 특가 프로모션",
+    "start_date": "2025-10-01",
+    "end_date": "2025-10-31"
+  },
   "discount_codes": [
     {
       "code": "AEPPOM0802",
@@ -51,67 +56,67 @@
   ],
   "card_discounts": [
     {
-      "name": "알리익스프레스 신한카드",
+      "card_name": "알리익스프레스 신한카드",
       "min_price": 50,
       "discount": 25,
       "note": "직구 상품에만 적용 가능"
     },
     {
-      "name": "Kakao Bank Mastercard",
+      "card_name": "Kakao Bank Mastercard",
       "min_price": 50,
       "discount": 8,
       "note": "직구 상품에만 적용 가능"
     },
     {
-      "name": "신한 Mastercard",
+      "card_name": "신한 Mastercard",
       "min_price": 100,
       "discount": 15,
       "note": "직구 상품에만 적용 가능"
     },
     {
-      "name": "삼성 Mastercard",
+      "card_name": "삼성 Mastercard",
       "min_price": 100,
       "discount": 15,
       "note": "직구 상품에만 적용 가능"
     },
     {
-      "name": "롯데 Mastercard",
+      "card_name": "롯데 Mastercard",
       "min_price": 100,
       "discount": 15,
       "note": "직구 상품에만 적용 가능"
     },
     {
-      "name": "하나 Mastercard",
+      "card_name": "하나 Mastercard",
       "min_price": 100,
       "discount": 15,
       "note": "직구 상품에만 적용 가능"
     },
     {
-      "name": "BC Baro Mastercard",
+      "card_name": "BC Baro Mastercard",
       "min_price": 100,
       "discount": 15,
       "note": "직구 상품에만 적용 가능"
     },
     {
-      "name": "NH Card",
+      "card_name": "NH Card",
       "min_price": 100,
       "discount": 15,
       "note": "직구 상품에만 적용 가능"
     },
     {
-      "name": "KB VISA Card",
+      "card_name": "KB VISA Card",
       "min_price": 100,
       "discount": 15,
       "note": "직구 상품에만 적용 가능"
     },
     {
-      "name": "네이버페이 Moneycard",
+      "card_name": "네이버페이 Moneycard",
       "min_price": 100,
       "discount": 10,
       "note": "직구 상품에만 적용 가능"
     },
     {
-      "name": "하나 트래블로그 신용카드",
+      "card_name": "하나 트래블로그 신용카드",
       "min_price": 300,
       "discount": 50,
       "note": "직구 상품에만 적용 가능"
