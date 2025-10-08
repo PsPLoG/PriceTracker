@@ -29,13 +29,23 @@
         const EXCHANGE_RATE = 1390;
         const COIN_VALUE = 0.01;
 
-        function isValidPeriod(promotion) {
-            if (!promotion || !promotion.start_date || !promotion.end_date) return false;
+        function getPromotionStatus(promotion) {
+            if (!promotion || !promotion.start_date || !promotion.end_date) {
+                return { status: 'none' };
+            }
             const now = new Date();
             const start = new Date(promotion.start_date);
             const end = new Date(promotion.end_date);
             end.setHours(23, 59, 59, 999);
-            return now >= start && now <= end;
+            
+            if (now < start) {
+                const daysLeft = Math.ceil((start - now) / (1000 * 60 * 60 * 24));
+                return { status: 'upcoming', daysLeft, start, end };
+            } else if (now >= start && now <= end) {
+                return { status: 'active', start, end };
+            } else {
+                return { status: 'expired' };
+            }
         }
 
         function findBestDiscountCode(price, discountCodes) {
@@ -121,17 +131,19 @@
                 }
 
                 let couponsData = { promotion: null, discount_codes: [], card_discounts: [] };
-                let isPromotionValid = false;
+                let promotionStatus = { status: 'none' };
                 
                 if (couponsRes.ok) {
                     try {
                         const data = await couponsRes.json();
                         if (data.promotion) {
-                            isPromotionValid = isValidPeriod(data.promotion);
-                            if (isPromotionValid) {
+                            promotionStatus = getPromotionStatus(data.promotion);
+                            if (promotionStatus.status === 'active') {
                                 couponsData.promotion = data.promotion;
                                 couponsData.discount_codes = data.discount_codes || [];
                                 couponsData.card_discounts = data.card_discounts || [];
+                            } else if (promotionStatus.status === 'upcoming') {
+                                couponsData.promotion = data.promotion;
                             }
                         }
                     } catch (e) {
@@ -140,7 +152,7 @@
                 }
                 
                 const prices = calculatePrices(product, couponsData);
-                const hasDiscounts = isPromotionValid && (prices.bestCode || prices.applicableCards.length > 0);
+                const hasDiscounts = promotionStatus.status === 'active' && (prices.bestCode || prices.applicableCards.length > 0);
                 const hasCoinDiscount = product.coin_discount_percent > 0;
                 
                 container.innerHTML = `
@@ -152,7 +164,16 @@
                         ` : ''}
                         
                         <div class="p-6">
-                            ${couponsData.promotion && isPromotionValid ? `
+                            ${promotionStatus.status === 'upcoming' ? `
+                                <div class="mb-4 p-4 mobile-p-3 bg-gradient-to-r from-blue-50 to-indigo-50 rounded-lg border-2 border-blue-400 text-center">
+                                    <div class="text-blue-800 font-bold text-xl mobile-text-lg mb-2">🎉 ${couponsData.promotion.name}</div>
+                                    <div class="text-blue-600 text-sm mobile-text-sm mb-2">${formatDate(couponsData.promotion.start_date)} ~ ${formatDate(couponsData.promotion.end_date)}</div>
+                                    <div class="bg-white rounded-lg p-3 inline-block border-2 border-blue-300">
+                                        <div class="text-blue-500 text-sm mobile-text-sm mb-1">프로모션 시작까지</div>
+                                        <div class="text-4xl mobile-text-3xl font-bold text-blue-700">D-${promotionStatus.daysLeft}</div>
+                                    </div>
+                                </div>
+                            ` : promotionStatus.status === 'active' ? `
                                 <div class="mb-4 p-3 mobile-p-3 bg-gradient-to-r from-orange-50 to-red-50 rounded-lg border-2 border-orange-400 text-center">
                                     <div class="text-orange-700 font-bold text-lg mobile-text-base">${couponsData.promotion.name}</div>
                                     <div class="text-orange-600 text-sm mobile-text-sm mt-1">${formatDate(couponsData.promotion.start_date)} ~ ${formatDate(couponsData.promotion.end_date)}</div>
