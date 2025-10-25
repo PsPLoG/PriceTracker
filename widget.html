@@ -64,20 +64,28 @@
             const originalPrice = product.original_price;
             const coinDiscountedPrice = originalPrice * (1 - product.coin_discount_percent / 100);
             
-            const bestCode = findBestDiscountCode(coinDiscountedPrice, coupons.discount_codes);
-            const codeDiscountedPrice = bestCode 
-                ? coinDiscountedPrice - bestCode.discount 
-                : coinDiscountedPrice;
+            // 셀러 쿠폰 적용
+            let afterSellerCoupon = coinDiscountedPrice;
+            if (product.seller_coupon && product.seller_coupon.discount > 0) {
+                afterSellerCoupon = coinDiscountedPrice - product.seller_coupon.discount;
+            }
             
-            const applicableCards = getApplicableCardDiscounts(coinDiscountedPrice, coupons.card_discounts);
+            const bestCode = findBestDiscountCode(afterSellerCoupon, coupons.discount_codes);
+            const codeDiscountedPrice = bestCode 
+                ? afterSellerCoupon - bestCode.discount 
+                : afterSellerCoupon;
+            
+            const applicableCards = getApplicableCardDiscounts(afterSellerCoupon, coupons.card_discounts);
             
             return {
                 original: originalPrice,
                 afterCoin: coinDiscountedPrice,
+                afterSellerCoupon: afterSellerCoupon,
                 afterCode: codeDiscountedPrice,
                 bestCode: bestCode,
                 applicableCards: applicableCards,
-                coinAmount: Math.round((originalPrice * product.coin_discount_percent / 100) / COIN_VALUE)
+                coinAmount: Math.round((originalPrice * product.coin_discount_percent / 100) / COIN_VALUE),
+                sellerCoupon: product.seller_coupon
             };
         }
 
@@ -154,6 +162,7 @@
                 const prices = calculatePrices(product, couponsData);
                 const hasDiscounts = promotionStatus.status === 'active' && (prices.bestCode || prices.applicableCards.length > 0);
                 const hasCoinDiscount = product.coin_discount_percent > 0;
+                const hasSellerCoupon = prices.sellerCoupon && prices.sellerCoupon.discount > 0;
                 
                 container.innerHTML = `
                     <div class="bg-white rounded-xl shadow-2xl border-2 border-gray-300 overflow-hidden">
@@ -183,20 +192,28 @@
                             <h2 class="text-2xl mobile-text-xl font-bold text-gray-800 mb-4">${product.name}</h2>
                             
                             <div class="mb-4 flex flex-wrap gap-2">
-                                ${product.links.map((link, idx) => `
+                                ${product.links.map((link, idx) => {
+                                    const linkText = product.link_texts && product.link_texts[idx] 
+                                        ? product.link_texts[idx] 
+                                        : `상품 링크 ${idx + 1}`;
+                                    return `
                                     <a href="${link}" target="_blank" rel="noopener noreferrer" class="inline-flex items-center px-3 py-1 bg-blue-50 text-blue-700 rounded-full text-sm hover:bg-blue-100 transition-colors border border-blue-300">
                                         <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"/>
                                         </svg>
-                                        상품 링크 ${idx + 1}
+                                        ${linkText}
                                     </a>
-                                `).join('')}
+                                `;
+                                }).join('')}
                             </div>
                             
                             <div class="space-y-3 mb-6">
                                 <div class="flex justify-between items-center p-3 mobile-p-3 bg-gray-50 rounded-lg border border-gray-300">
                                     <span class="text-gray-600 mobile-text-sm">정가</span>
-                                    <span class="text-xl mobile-text-lg font-bold text-gray-400 line-through">$${prices.original.toFixed(2)}</span>
+                                    <div class="text-right">
+                                        <span class="text-xl mobile-text-lg font-bold text-gray-400 line-through">$${prices.original.toFixed(2)}</span>
+                                        <div class="text-sm mobile-text-sm text-gray-500 mt-0.5">약 ${toKRW(prices.original)}원</div>
+                                    </div>
                                 </div>
                                 
                                 ${hasCoinDiscount ? `
@@ -208,7 +225,36 @@
                                             </div>             
                                             <span class="text-gray-600 mobile-text-sm">(할인율이 다르다면 상품을 장바구니에 담고 코인샵에서 확인하세요)</span>
                                         </div>
-                                        <span class="text-xl mobile-text-lg font-bold text-orange-700">$${prices.afterCoin.toFixed(2)}</span>
+                                        <div class="text-right">
+                                            <span class="text-xl mobile-text-lg font-bold text-orange-700">$${prices.afterCoin.toFixed(2)}</span>
+                                            <div class="text-sm mobile-text-sm text-orange-600 mt-0.5">약 ${toKRW(prices.afterCoin)}원</div>
+                                        </div>
+                                    </div>
+                                ` : ''}
+                                
+                                ${hasSellerCoupon ? `
+                                    <div class="p-4 mobile-p-3 bg-gradient-to-r from-yellow-50 to-amber-50 rounded-lg border-2 border-dashed border-yellow-400">
+                                        <div class="flex justify-between items-start mb-2">
+                                            <div class="flex-1">
+                                                <div class="flex items-center gap-2 mb-2">
+                                                    <svg class="w-5 h-5 text-yellow-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v13m0-13V6a2 2 0 112 2h-2zm0 0V5.5A2.5 2.5 0 109.5 8H12zm-7 4h14M5 12a2 2 0 110-4h14a2 2 0 110 4M5 12v7a2 2 0 002 2h10a2 2 0 002-2v-7"/>
+                                                    </svg>
+                                                    <span class="font-bold text-yellow-800 mobile-text-sm">셀러 쿠폰</span>
+                                                </div>
+                                                <div class="text-sm mobile-text-sm text-yellow-700">${prices.sellerCoupon.note || '상품 페이지에서 쿠폰 받기'}</div>
+                                            </div>
+                                            <span class="text-xl mobile-text-lg font-bold text-yellow-700">-$${prices.sellerCoupon.discount}</span>
+                                        </div>
+                                        <div class="mt-2 p-2 bg-white rounded border border-yellow-300">
+                                            <div class="flex justify-between items-center">
+                                                <span class="text-yellow-800 font-semibold mobile-text-sm">셀러 쿠폰 적용 후</span>
+                                                <div class="text-right">
+                                                    <div class="text-xl mobile-text-lg font-bold text-yellow-700">$${prices.afterSellerCoupon.toFixed(2)}</div>
+                                                    <div class="text-sm mobile-text-sm text-yellow-600">약 ${toKRW(prices.afterSellerCoupon)}원</div>
+                                                </div>
+                                            </div>
+                                        </div>
                                     </div>
                                 ` : ''}
                                 
