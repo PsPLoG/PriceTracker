@@ -1,0 +1,397 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>상품 리스트 위젯</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body { background: transparent; }
+        
+        @media (max-width: 768px) {
+            .mobile-text-xs { font-size: 0.7rem !important; }
+            .mobile-text-sm { font-size: 0.75rem !important; }
+            .mobile-text-base { font-size: 0.875rem !important; }
+            .mobile-text-lg { font-size: 1rem !important; }
+            .mobile-text-xl { font-size: 1.125rem !important; }
+            .mobile-p-2 { padding: 0.375rem !important; }
+            .mobile-p-3 { padding: 0.5rem !important; }
+        }
+    </style>
+</head>
+<body>
+    <div id="widget-container" class="max-w-4xl mx-auto p-4"></div>
+
+    <script>
+        const params = new URLSearchParams(window.location.search);
+        const idsParam = params.get('ids');
+        const EXCHANGE_RATE = 1390;
+        const COIN_VALUE = 0.01;
+
+        function getPromotionStatus(promotion) {
+            if (!promotion || !promotion.start_date || !promotion.end_date) {
+                return { status: 'none' };
+            }
+            const now = new Date();
+            const start = new Date(promotion.start_date);
+            const end = new Date(promotion.end_date);
+            end.setHours(23, 59, 59, 999);
+            
+            if (now < start) {
+                const daysLeft = Math.ceil((start - now) / (1000 * 60 * 60 * 24));
+                return { status: 'upcoming', daysLeft, start, end };
+            } else if (now >= start && now <= end) {
+                return { status: 'active', start, end };
+            } else {
+                return { status: 'expired' };
+            }
+        }
+
+        function findBestDiscountCode(price, discountCodes) {
+            const applicable = discountCodes.filter(c => price >= c.min_price);
+            if (applicable.length === 0) return null;
+            return applicable.reduce((best, current) => 
+                current.discount > best.discount ? current : best
+            );
+        }
+
+        function calculatePrices(product, coupons) {
+            const originalPrice = product.original_price;
+            const coinDiscountedPrice = originalPrice * (1 - product.coin_discount_percent / 100);
+            
+            let afterSellerCoupon = coinDiscountedPrice;
+            if (product.seller_coupon && product.seller_coupon.discount > 0) {
+                afterSellerCoupon = coinDiscountedPrice - product.seller_coupon.discount;
+            }
+            
+            const bestCode = findBestDiscountCode(afterSellerCoupon, coupons.discount_codes);
+            const codeDiscountedPrice = bestCode 
+                ? afterSellerCoupon - bestCode.discount 
+                : afterSellerCoupon;
+            
+            return {
+                original: originalPrice,
+                afterCoin: coinDiscountedPrice,
+                afterSellerCoupon: afterSellerCoupon,
+                finalPrice: codeDiscountedPrice,
+                bestCode: bestCode,
+                totalDiscount: originalPrice - codeDiscountedPrice,
+                discountPercent: ((originalPrice - codeDiscountedPrice) / originalPrice * 100).toFixed(0),
+                hasCoinDiscount: product.coin_discount_percent > 0,
+                hasSellerCoupon: product.seller_coupon && product.seller_coupon.discount > 0,
+                sellerCoupon: product.seller_coupon
+            };
+        }
+
+        function formatDate(dateStr) {
+            if (!dateStr) return '';
+            const date = new Date(dateStr);
+            return `${date.getMonth() + 1}/${date.getDate()}`;
+        }
+        
+        function toKRW(usd) {
+            return Math.round(usd * EXCHANGE_RATE).toLocaleString('ko-KR');
+        }
+
+        function handlePurchaseClick(event, productId, couponCode) {
+            if (couponCode) {
+                event.preventDefault();
+                
+                navigator.clipboard.writeText(couponCode).then(() => {
+                    const notification = document.getElementById(`notification-${productId}`);
+                    const codeText = document.getElementById(`code-text-${productId}`);
+                    codeText.textContent = couponCode;
+                    notification.classList.remove('hidden');
+                    
+                    setTimeout(updateIframeHeight, 50);
+                    
+                    setTimeout(() => {
+                        window.open(event.currentTarget.href, '_blank');
+                        
+                        setTimeout(() => {
+                            notification.classList.add('hidden');
+                            setTimeout(updateIframeHeight, 50);
+                        }, 1000);
+                    }, 2000);
+                }).catch(err => {
+                    console.error('쿠폰 복사 실패:', err);
+                    window.open(event.currentTarget.href, '_blank');
+                });
+            }
+        }
+
+        async function loadWidget() {
+            const container = document.getElementById('widget-container');
+
+            if (!idsParam) {
+                container.innerHTML = `
+                    <div class="p-4 bg-red-50 border-2 border-red-300 rounded-lg">
+                        <div class="flex items-center text-red-700">
+                            <span class="mr-2">⚠️</span>
+                            <span>상품 ID가 필요합니다. (예: ?ids=id1,id2,id3)</span>
+                        </div>
+                    </div>
+                `;
+                return;
+            }
+
+            const ids = idsParam.split(',').map(id => id.trim()).filter(id => id);
+
+            if (ids.length === 0) {
+                container.innerHTML = `
+                    <div class="p-4 bg-red-50 border-2 border-red-300 rounded-lg">
+                        <div class="flex items-center text-red-700">
+                            <span class="mr-2">⚠️</span>
+                            <span>유효한 상품 ID가 없습니다.</span>
+                        </div>
+                    </div>
+                `;
+                return;
+            }
+
+            container.innerHTML = `
+                <div class="flex items-center justify-center p-6 bg-gray-100 rounded-lg">
+                    <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-orange-500"></div>
+                    <span class="ml-3 text-gray-600">로딩중...</span>
+                </div>
+            `;
+
+            try {
+                const [productsRes, couponsRes] = await Promise.all([
+                    fetch('https://script.google.com/macros/s/AKfycbz212-fFlsx7ZOR9Icv0i_eA7yTcghVKRU1dsXcOUq-U07CWR9aEPanATJ2XF6Mbq7QYg/exec'),
+                    fetch('coupons.json')
+                ]);
+                
+                if (!productsRes.ok) {
+                    throw new Error('상품 데이터를 불러올 수 없습니다.');
+                }
+                
+                const productsData = await productsRes.json();
+                
+                let couponsData = { promotion: null, discount_codes: [], card_discounts: [] };
+                let promotionStatus = { status: 'none' };
+                
+                if (couponsRes.ok) {
+                    try {
+                        const data = await couponsRes.json();
+                        if (data.promotion) {
+                            promotionStatus = getPromotionStatus(data.promotion);
+                            if (promotionStatus.status === 'active') {
+                                couponsData.promotion = data.promotion;
+                                couponsData.discount_codes = data.discount_codes || [];
+                                couponsData.card_discounts = data.card_discounts || [];
+                            }
+                        }
+                    } catch (e) {
+                        console.log('쿠폰 파일 파싱 실패');
+                    }
+                }
+
+                const products = [];
+                const notFoundIds = [];
+
+                ids.forEach(id => {
+                    const product = productsData.products[id];
+                    if (product) {
+                        products.push({ id, ...product });
+                    } else {
+                        notFoundIds.push(id);
+                    }
+                });
+
+                if (products.length === 0) {
+                    container.innerHTML = `
+                        <div class="p-4 bg-red-50 border-2 border-red-300 rounded-lg">
+                            <div class="flex items-center text-red-700">
+                                <span class="mr-2">❌</span>
+                                <span>요청한 상품을 찾을 수 없습니다.</span>
+                            </div>
+                        </div>
+                    `;
+                    return;
+                }
+
+                let html = `<div class="space-y-4">`;
+
+                // 프로모션 배너 (있는 경우)
+                if (promotionStatus.status === 'active' && couponsData.promotion) {
+                    html += `
+                        <div class="p-4 mobile-p-3 bg-gradient-to-r from-orange-50 to-red-50 rounded-lg border-2 border-orange-400 text-center">
+                            <div class="text-orange-700 font-bold text-lg mobile-text-base">${couponsData.promotion.name}</div>
+                            <div class="text-orange-600 text-sm mobile-text-sm mt-1">${formatDate(couponsData.promotion.start_date)} ~ ${formatDate(couponsData.promotion.end_date)}</div>
+                        </div>
+                    `;
+                }
+
+                // 각 상품 카드
+                products.forEach(product => {
+                    const prices = calculatePrices(product, couponsData);
+                    const hasDiscounts = prices.bestCode || prices.hasSellerCoupon || prices.hasCoinDiscount;
+
+                    html += `
+                        <div class="bg-white rounded-xl shadow-lg border-2 border-gray-200 overflow-hidden hover:shadow-xl transition-shadow">
+                            <div class="md:flex">
+                                ${product.image ? `
+                                    <div class="md:w-48 md:h-48 h-40 bg-gray-100 flex-shrink-0">
+                                        <img src="${product.image}" alt="${product.name}" class="w-full h-full object-cover" onerror="this.style.display='none'">
+                                    </div>
+                                ` : ''}
+                                
+                                <div class="flex-1 p-4 mobile-p-3">
+                                    <h3 class="text-xl mobile-text-lg font-bold text-gray-800 mb-2">${product.name}</h3>
+                                    
+                                    <div class="mb-3 flex flex-wrap gap-2">
+                                        ${product.links.map((link, idx) => {
+                                            const linkText = product.link_texts && product.link_texts[idx] 
+                                                ? product.link_texts[idx] 
+                                                : `링크 ${idx + 1}`;
+                                            return `
+                                            <a href="${link}" target="_blank" rel="noopener noreferrer" class="inline-flex items-center px-2 py-1 bg-blue-50 text-blue-700 rounded-full text-xs hover:bg-blue-100 transition-colors border border-blue-300">
+                                                <svg class="w-3 h-3 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"/>
+                                                </svg>
+                                                ${linkText}
+                                            </a>
+                                        `;
+                                        }).join('')}
+                                    </div>
+                                    
+                                    <div class="grid grid-cols-2 gap-3 mb-3">
+                                        <div class="bg-gray-50 rounded-lg p-2 mobile-p-2 border border-gray-200">
+                                            <div class="text-xs mobile-text-xs text-gray-600 mb-1">정가</div>
+                                            <div class="text-sm mobile-text-sm text-gray-400 line-through">$${prices.original.toFixed(2)}</div>
+                                            <div class="text-xs mobile-text-xs text-gray-500">${toKRW(prices.original)}원</div>
+                                        </div>
+                                        
+                                        ${hasDiscounts ? `
+                                            <div class="bg-green-50 rounded-lg p-2 mobile-p-2 border border-green-300">
+                                                <div class="text-xs mobile-text-xs text-green-700 mb-1">최종가</div>
+                                                <div class="text-lg mobile-text-base font-bold text-green-700">$${prices.finalPrice.toFixed(2)}</div>
+                                                <div class="text-xs mobile-text-xs text-green-600">${toKRW(prices.finalPrice)}원</div>
+                                            </div>
+                                        ` : `
+                                            <div class="bg-orange-50 rounded-lg p-2 mobile-p-2 border border-orange-300">
+                                                <div class="text-xs mobile-text-xs text-orange-700 mb-1">할인가</div>
+                                                <div class="text-lg mobile-text-base font-bold text-orange-700">$${prices.afterCoin.toFixed(2)}</div>
+                                                <div class="text-xs mobile-text-xs text-orange-600">${toKRW(prices.afterCoin)}원</div>
+                                            </div>
+                                        `}
+                                    </div>
+                                    
+                                    <div class="flex flex-wrap gap-2 mb-3">
+                                        ${prices.hasCoinDiscount ? `
+                                            <span class="inline-flex items-center px-2 py-1 bg-orange-100 text-orange-700 rounded-full text-xs font-semibold border border-orange-300">
+                                                <svg class="w-3 h-3 mr-1" fill="currentColor" viewBox="0 0 20 20">
+                                                    <path d="M8.433 7.418c.155-.103.346-.196.567-.267v1.698a2.305 2.305 0 01-.567-.267C8.07 8.34 8 8.114 8 8c0-.114.07-.34.433-.582zM11 12.849v-1.698c.22.071.412.164.567.267.364.243.433.468.433.582 0 .114-.07.34-.433.582a2.305 2.305 0 01-.567.267z"/>
+                                                    <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-13a1 1 0 10-2 0v.092a4.535 4.535 0 00-1.676.662C6.602 6.234 6 7.009 6 8c0 .99.602 1.765 1.324 2.246.48.32 1.054.545 1.676.662v1.941c-.391-.127-.68-.317-.843-.504a1 1 0 10-1.51 1.31c.562.649 1.413 1.076 2.353 1.253V15a1 1 0 102 0v-.092a4.535 4.535 0 001.676-.662C13.398 13.766 14 12.991 14 12c0-.99-.602-1.765-1.324-2.246A4.535 4.535 0 0011 9.092V7.151c.391.127.68.317.843.504a1 1 0 101.511-1.31c-.563-.649-1.413-1.076-2.354-1.253V5z" clip-rule="evenodd"/>
+                                                </svg>
+                                                코인 ${product.coin_discount_percent}%
+                                            </span>
+                                        ` : ''}
+                                        
+                                        ${prices.hasSellerCoupon ? `
+                                            <span class="inline-flex items-center px-2 py-1 bg-yellow-100 text-yellow-700 rounded-full text-xs font-semibold border border-yellow-300">
+                                                <svg class="w-3 h-3 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z"/>
+                                                </svg>
+                                                셀러 쿠폰 $${prices.sellerCoupon.discount}
+                                            </span>
+                                        ` : ''}
+                                        
+                                        ${prices.bestCode ? `
+                                            <span class="inline-flex items-center px-2 py-1 bg-red-100 text-red-700 rounded-full text-xs font-semibold border border-red-300">
+                                                <svg class="w-3 h-3 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 5v2m0 4v2m0 4v2M5 5a2 2 0 00-2 2v3a2 2 0 110 4v3a2 2 0 002 2h14a2 2 0 002-2v-3a2 2 0 110-4V7a2 2 0 00-2-2H5z"/>
+                                                </svg>
+                                                ${prices.bestCode.code}
+                                            </span>
+                                        ` : ''}
+                                        
+                                        ${hasDiscounts ? `
+                                            <span class="inline-flex items-center px-2 py-1 bg-blue-100 text-blue-700 rounded-full text-xs font-semibold border border-blue-300">
+                                                💰 ${prices.discountPercent}% 할인
+                                            </span>
+                                        ` : ''}
+                                    </div>
+                                    
+                                    <div class="flex gap-2">
+                                        <a href="${product.links[0]}" target="_blank" rel="noopener noreferrer"
+                                           onclick="handlePurchaseClick(event, '${product.id}', ${prices.bestCode ? `'${prices.bestCode.code}'` : 'null'})"
+                                           class="flex-1 flex items-center justify-center gap-2 py-2 bg-gradient-to-r from-orange-500 to-red-500 hover:from-orange-600 hover:to-red-600 text-white font-bold rounded-lg transition-all text-sm mobile-text-sm">
+                                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"/>
+                                            </svg>
+                                            구매하기
+                                        </a>
+                                        <a href="?id=${product.id}" target="_blank" rel="noopener noreferrer"
+                                           class="px-4 py-2 bg-gray-100 hover:bg-gray-200 text-gray-700 font-semibold rounded-lg transition-all text-sm mobile-text-sm border border-gray-300">
+                                            상세보기
+                                        </a>
+                                    </div>
+                                    
+                                    <div id="notification-${product.id}" class="hidden mt-2 p-2 bg-green-100 border border-green-400 rounded text-center">
+                                        <div class="flex items-center justify-center gap-2 text-green-700 text-xs font-bold">
+                                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                                            </svg>
+                                            <span id="code-text-${product.id}"></span> 복사됨!
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                });
+
+                html += `</div>`;
+
+                if (notFoundIds.length > 0) {
+                    html += `
+                        <div class="mt-4 p-3 bg-yellow-50 border border-yellow-300 rounded-lg">
+                            <div class="text-yellow-700 text-sm">
+                                <strong>참고:</strong> 다음 ID를 찾을 수 없습니다: ${notFoundIds.join(', ')}
+                            </div>
+                        </div>
+                    `;
+                }
+
+                container.innerHTML = html;
+                
+            } catch (error) {
+                container.innerHTML = `
+                    <div class="p-4 bg-red-50 border-2 border-red-300 rounded-lg">
+                        <div class="flex items-center text-red-700">
+                            <span class="mr-2">❌</span>
+                            <span>${error.message}</span>
+                        </div>
+                    </div>
+                `;
+            }
+        }
+
+        function updateIframeHeight() {
+            try {
+                const height = Math.max(
+                    document.body.scrollHeight,
+                    document.documentElement.scrollHeight,
+                    document.body.offsetHeight,
+                    document.documentElement.offsetHeight
+                );
+                window.parent.postMessage({ type: 'resize', height: height }, '*');
+            } catch (e) {}
+        }
+
+        async function init() {
+            await loadWidget();
+            setTimeout(updateIframeHeight, 100);
+            setTimeout(updateIframeHeight, 300);
+            setTimeout(updateIframeHeight, 500);
+            setTimeout(updateIframeHeight, 1000);
+        }
+
+        init();
+        window.addEventListener('resize', updateIframeHeight);
+        window.addEventListener('load', () => setTimeout(updateIframeHeight, 500));
+    </script>
+</body>
+</html>
