@@ -81,27 +81,43 @@
         }
 
         function copyCoupon(productId, couponCode) {
-            navigator.clipboard.writeText(couponCode).then(() => {
-                const button = document.getElementById(`copy-btn-${productId}`);
-                const originalHTML = button.innerHTML;
+            // 대체 복사 방법 (구형 브라우저 지원)
+            const textarea = document.createElement('textarea');
+            textarea.value = couponCode;
+            textarea.style.position = 'fixed';
+            textarea.style.opacity = '0';
+            document.body.appendChild(textarea);
+            textarea.select();
+            
+            try {
+                const successful = document.execCommand('copy');
+                document.body.removeChild(textarea);
                 
-                button.innerHTML = `
-                    <svg class="w-5 h-5 mobile-w-4 mobile-h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
-                    </svg>
-                    복사 완료!
-                `;
-                button.classList.remove('from-red-500', 'to-orange-500', 'hover:from-red-600', 'hover:to-orange-600');
-                button.classList.add('from-green-500', 'to-green-600');
-                
-                setTimeout(() => {
-                    button.innerHTML = originalHTML;
-                    button.classList.remove('from-green-500', 'to-green-600');
-                    button.classList.add('from-red-500', 'to-orange-500', 'hover:from-red-600', 'hover:to-orange-600');
-                }, 2000);
-            }).catch(err => {
-                alert('쿠폰 복사에 실패했습니다.');
-            });
+                if (successful) {
+                    const button = document.getElementById(`copy-btn-${productId}`);
+                    const originalHTML = button.innerHTML;
+                    
+                    button.innerHTML = `
+                        <svg class="w-5 h-5 mobile-w-4 mobile-h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                        </svg>
+                        복사 완료!
+                    `;
+                    button.classList.remove('from-red-500', 'to-orange-500', 'hover:from-red-600', 'hover:to-orange-600');
+                    button.classList.add('from-green-500', 'to-green-600');
+                    
+                    setTimeout(() => {
+                        button.innerHTML = originalHTML;
+                        button.classList.remove('from-green-500', 'to-green-600');
+                        button.classList.add('from-red-500', 'to-orange-500', 'hover:from-red-600', 'hover:to-orange-600');
+                    }, 2000);
+                } else {
+                    throw new Error('복사 실패');
+                }
+            } catch (err) {
+                document.body.removeChild(textarea);
+                alert(`쿠폰 코드: ${couponCode}\n\n위 코드를 복사해서 사용하세요.`);
+            }
         }
 
         async function loadListing() {
