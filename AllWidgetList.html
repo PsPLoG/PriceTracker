@@ -80,6 +80,30 @@
             return Math.round(usd * EXCHANGE_RATE).toLocaleString('ko-KR');
         }
 
+        function copyCoupon(productId, couponCode) {
+            navigator.clipboard.writeText(couponCode).then(() => {
+                const button = document.getElementById(`copy-btn-${productId}`);
+                const originalHTML = button.innerHTML;
+                
+                button.innerHTML = `
+                    <svg class="w-5 h-5 mobile-w-4 mobile-h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                    </svg>
+                    복사 완료!
+                `;
+                button.classList.remove('from-red-500', 'to-orange-500', 'hover:from-red-600', 'hover:to-orange-600');
+                button.classList.add('from-green-500', 'to-green-600');
+                
+                setTimeout(() => {
+                    button.innerHTML = originalHTML;
+                    button.classList.remove('from-green-500', 'to-green-600');
+                    button.classList.add('from-red-500', 'to-orange-500', 'hover:from-red-600', 'hover:to-orange-600');
+                }, 2000);
+            }).catch(err => {
+                alert('쿠폰 복사에 실패했습니다.');
+            });
+        }
+
         async function loadListing() {
             const container = document.getElementById('listing-container');
 
@@ -193,25 +217,44 @@
                                                     </span>
                                                 ` : ''}
                                                 ${prices.bestCode ? `
-                                                    <span class="inline-flex items-center px-2 py-1 bg-red-50 rounded text-xs mobile-text-sm text-red-700 border border-red-200">
-                                                        🎫 할인코드 -$${prices.bestCode.discount}
+                                                    <span class="inline-flex items-center px-2 py-1 bg-red-50 rounded text-xs mobile-text-sm text-red-700 border border-red-200 font-mono font-bold">
+                                                        🎫 ${prices.bestCode.code}
                                                     </span>
                                                 ` : ''}
                                             </div>
                                             
+                                            ${prices.bestCode ? `
+                                                <div class="mb-3 p-2 bg-red-50 rounded border border-red-200">
+                                                    <div class="text-xs mobile-text-sm text-red-700">
+                                                        <div class="font-semibold mb-1">할인 코드: <code class="font-mono font-bold">${prices.bestCode.code}</code></div>
+                                                        <div>${prices.bestCode.note}</div>
+                                                    </div>
+                                                </div>
+                                            ` : ''}
+                                            
                                             <div class="flex gap-2">
-                                                <a href="${product.links[0]}" target="_blank" rel="noopener noreferrer" 
-                                                   class="flex-1 flex items-center justify-center gap-2 py-3 mobile-py-2 bg-gradient-to-r from-orange-500 to-red-500 hover:from-orange-600 hover:to-red-600 text-white font-bold rounded-lg transition-all transform hover:scale-105 text-base mobile-text-sm">
-                                                    <svg class="w-5 h-5 mobile-w-4 mobile-h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"/>
-                                                    </svg>
-                                                    구매하기
-                                                </a>
+                                                ${prices.bestCode ? `
+                                                    <button id="copy-btn-${id}" onclick="copyCoupon('${id}', '${prices.bestCode.code}')"
+                                                            class="flex-1 flex items-center justify-center gap-2 py-3 mobile-py-2 bg-gradient-to-r from-red-500 to-orange-500 hover:from-red-600 hover:to-orange-600 text-white font-bold rounded-lg transition-all transform hover:scale-105 text-base mobile-text-sm">
+                                                        <svg class="w-5 h-5 mobile-w-4 mobile-h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"/>
+                                                        </svg>
+                                                        쿠폰 복사
+                                                    </button>
+                                                ` : `
+                                                    <a href="${product.links[0]}" target="_blank" rel="noopener noreferrer" 
+                                                       class="flex-1 flex items-center justify-center gap-2 py-3 mobile-py-2 bg-gradient-to-r from-orange-500 to-red-500 hover:from-orange-600 hover:to-red-600 text-white font-bold rounded-lg transition-all transform hover:scale-105 text-base mobile-text-sm">
+                                                        <svg class="w-5 h-5 mobile-w-4 mobile-h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"/>
+                                                        </svg>
+                                                        구매하기
+                                                    </a>
+                                                `}
                                                 
-                                                <button onclick="window.open('widget.html?id=${id}', '_blank')" 
-                                                        class="px-4 py-3 mobile-py-2 bg-blue-50 hover:bg-blue-100 text-blue-700 font-semibold rounded-lg transition-colors text-base mobile-text-sm border border-blue-300">
+                                                <a href="https://guiitta.tistory.com/${id}" target="_blank" rel="noopener noreferrer"
+                                                   class="px-4 py-3 mobile-py-2 bg-blue-50 hover:bg-blue-100 text-blue-700 font-semibold rounded-lg transition-colors text-base mobile-text-sm border border-blue-300">
                                                     상세보기
-                                                </button>
+                                                </a>
                                             </div>
                                         </div>
                                     </div>
