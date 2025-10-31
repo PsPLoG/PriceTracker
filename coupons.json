@@ -1,8 +1,69 @@
 {
   "promotion": {
-    "name": "1년중 최대 할인, 11.11 광군제 할인",
-    "start_date": "2025-11-11",
-    "end_date": "2025-11-18"
+    "name": "1년중 최대 할인, 11.11 광군제 전 메가 초이스데이",
+    "start_date": "2025-11-01",
+    "end_date": "2025-11-07"
   },
-  "discount_codes": []
+  "discount_codes": [
+    {
+      "code": "CHOICEKR03",
+      "min_price": 20,
+      "discount": 3,
+      "note": null
+    },
+    {
+      "code": "CHOICEKR04",
+      "min_price": 25,
+      "discount": 4,
+      "note": null
+    },
+    {
+      "code": "CHOICEKR05",
+      "min_price": 33,
+      "discount": 5,
+      "note": null
+    },
+    {
+      "code": "CHOICEKR06",
+      "min_price": 38,
+      "discount": 6,
+      "note": null
+    },
+    {
+      "code": "CHOICEKR08",
+      "min_price": 55,
+      "discount": 8,
+      "note": null
+    },
+    {
+      "code": "CHOICEKR12",
+      "min_price": 89,
+      "discount": 12,
+      "note": null
+    },
+    {
+      "code": "CHOICEKR19",
+      "min_price": 139,
+      "discount": 19,
+      "note": null
+    },
+    {
+      "code": "CHOICEKR28",
+      "min_price": 209,
+      "discount": 28,
+      "note": null
+    },
+    {
+      "code": "CHOICEKR45",
+      "min_price": 349,
+      "discount": 45,
+      "note": null
+    },
+    {
+      "code": "CHOICEKR66",
+      "min_price": 559,
+      "discount": 66,
+      "note": null
+    }
+  ]
 }
