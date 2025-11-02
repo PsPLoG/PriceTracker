@@ -80,7 +80,7 @@
             return Math.round(usd * EXCHANGE_RATE).toLocaleString('ko-KR');
         }
 
-        function copyCoupon(productId, couponCode) {
+        function copyCoupon(productId, couponCode, productLink) {
             // 대체 복사 방법 (구형 브라우저 지원)
             const textarea = document.createElement('textarea');
             textarea.value = couponCode;
@@ -106,17 +106,26 @@
                     button.classList.remove('from-red-500', 'to-orange-500', 'hover:from-red-600', 'hover:to-orange-600');
                     button.classList.add('from-green-500', 'to-green-600');
                     
+                    // 1초 후 상품 페이지로 이동
                     setTimeout(() => {
-                        button.innerHTML = originalHTML;
-                        button.classList.remove('from-green-500', 'to-green-600');
-                        button.classList.add('from-red-500', 'to-orange-500', 'hover:from-red-600', 'hover:to-orange-600');
-                    }, 2000);
+                        window.open(productLink, '_blank');
+                        
+                        // 버튼 원래대로 복구
+                        setTimeout(() => {
+                            button.innerHTML = originalHTML;
+                            button.classList.remove('from-green-500', 'to-green-600');
+                            button.classList.add('from-red-500', 'to-orange-500', 'hover:from-red-600', 'hover:to-orange-600');
+                        }, 500);
+                    }, 1000);
                 } else {
                     throw new Error('복사 실패');
                 }
             } catch (err) {
                 document.body.removeChild(textarea);
-                alert(`쿠폰 코드: ${couponCode}\n\n위 코드를 복사해서 사용하세요.`);
+                const userConfirm = confirm(`쿠폰 코드: ${couponCode}\n\n확인을 누르면 상품 페이지로 이동합니다.`);
+                if (userConfirm) {
+                    window.open(productLink, '_blank');
+                }
             }
         }
 
