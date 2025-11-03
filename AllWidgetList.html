@@ -80,7 +80,11 @@
             return Math.round(usd * EXCHANGE_RATE).toLocaleString('ko-KR');
         }
 
-        function copyCoupon(productId, couponCode, productLink) {
+        function copyCoupon(button) {
+            const productId = button.getAttribute('data-product-id');
+            const couponCode = button.getAttribute('data-coupon-code');
+            const productLink = button.getAttribute('data-product-link');
+            
             // 대체 복사 방법 (구형 브라우저 지원)
             const textarea = document.createElement('textarea');
             textarea.value = couponCode;
@@ -94,7 +98,6 @@
                 document.body.removeChild(textarea);
                 
                 if (successful) {
-                    const button = document.getElementById(`copy-btn-${productId}`);
                     const originalHTML = button.innerHTML;
                     
                     button.innerHTML = `
@@ -259,8 +262,13 @@
                                             
                                             <div class="flex gap-2">
                                                 ${prices.bestCode ? `
-                                                    <button id="copy-btn-${id}" onclick="copyCoupon('${id}', '${prices.bestCode.code}')"
-                                                            class="flex-1 flex items-center justify-center gap-2 py-3 mobile-py-2 bg-gradient-to-r from-red-500 to-orange-500 hover:from-red-600 hover:to-orange-600 text-white font-bold rounded-lg transition-all transform hover:scale-105 text-base mobile-text-sm">
+                                                    <button 
+                                                        id="copy-btn-${id}" 
+                                                        data-product-id="${id}"
+                                                        data-coupon-code="${prices.bestCode.code}"
+                                                        data-product-link="${product.links[0]}"
+                                                        onclick="copyCoupon(this)"
+                                                        class="flex-1 flex items-center justify-center gap-2 py-3 mobile-py-2 bg-gradient-to-r from-red-500 to-orange-500 hover:from-red-600 hover:to-orange-600 text-white font-bold rounded-lg transition-all transform hover:scale-105 text-base mobile-text-sm">
                                                         <svg class="w-5 h-5 mobile-w-4 mobile-h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"/>
                                                         </svg>
