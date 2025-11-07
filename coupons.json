@@ -1,69 +1,197 @@
 {
-  "promotion": {
-    "name": "1년중 최대 할인, 11.11 광군제 전 메가 초이스데이",
-    "start_date": "2025-10-31",
-    "end_date": "2025-11-07"
+    "promotion": {
+    "name": "1년중 최대 할인, 11.11 광군제💶 미리보기",
+    "start_date": "2025-11-07",
+    "end_date": "2025-11-18"
   },
   "discount_codes": [
     {
-      "code": "CHOICEKR03",
-      "min_price": 20,
-      "discount": 3,
-      "note": null
-    },
-    {
-      "code": "CHOICEKR04",
+      "code": "AEKS04",
       "min_price": 25,
       "discount": 4,
-      "note": null
+      "note": "일부상품 적용 불가"
     },
     {
-      "code": "CHOICEKR05",
-      "min_price": 33,
-      "discount": 5,
-      "note": null
-    },
-    {
-      "code": "CHOICEKR06",
+      "code": "AEKS06",
       "min_price": 38,
       "discount": 6,
-      "note": null
+      "note": "일부상품 적용 불가"
     },
     {
-      "code": "CHOICEKR08",
-      "min_price": 55,
+      "code": "AEKS08",
+      "min_price": 54,
       "discount": 8,
-      "note": null
+      "note": "일부상품 적용 불가"
     },
     {
-      "code": "CHOICEKR12",
+      "code": "AEKS13",
       "min_price": 89,
-      "discount": 12,
-      "note": null
+      "discount": 13,
+      "note": "일부상품 적용 불가"
     },
     {
-      "code": "CHOICEKR19",
+      "code": "AEKS20",
       "min_price": 139,
-      "discount": 19,
-      "note": null
+      "discount": 20,
+      "note": "일부상품 적용 불가"
     },
     {
-      "code": "CHOICEKR28",
+      "code": "AEKS31",
       "min_price": 209,
-      "discount": 28,
-      "note": null
+      "discount": 31,
+      "note": "일부상품 적용 불가"
     },
     {
-      "code": "CHOICEKR45",
+      "code": "AEKS52",
       "min_price": 349,
-      "discount": 45,
-      "note": null
+      "discount": 52,
+      "note": "일부상품 적용 불가"
     },
     {
-      "code": "CHOICEKR66",
+      "code": "AEKS83",
       "min_price": 559,
-      "discount": 66,
-      "note": null
+      "discount": 83,
+      "note": "일부상품 적용 불가"
+    },
+    {
+      "code": "AEK102",
+      "min_price": 679,
+      "discount": 102,
+      "note": "일부상품 적용 불가"
+    }
+  ],
+  "card_discounts": [
+    {
+      "card_name": "삼성 iD SELECT ON Card Mastercard",
+      "min_price": 300,
+      "discount": 60,
+      "note": "해외직구 상품 전용"
+    },
+    {
+      "card_name": "하나 트래블GO VISA 카드",
+      "min_price": 150,
+      "discount": 30,
+      "note": "해외직구 상품 전용"
+    },
+    {
+      "card_name": "네이버페이",
+      "min_price": 130,
+      "discount": 9,
+      "note": "해외직구 상품 전용"
+    },
+    {
+      "card_name": "카카오페이",
+      "min_price": 110,
+      "discount": 11,
+      "note": "해외직구 상품 전용"
+    },
+    {
+      "card_name": "토스페이",
+      "min_price": 100,
+      "discount": 11,
+      "note": "해외직구 상품 전용"
+    },
+    {
+      "card_name": "KB Mastercard",
+      "min_price": 100,
+      "discount": 16,
+      "note": "해외직구 상품 전용"
+    },
+    {
+      "card_name": "삼성 Mastercard",
+      "min_price": 100,
+      "discount": 16,
+      "note": "해외직구 상품 전용"
+    },
+    {
+      "card_name": "KB VISA 카드",
+      "min_price": 100,
+      "discount": 16,
+      "note": "해외직구 상품 전용"
+    },
+    {
+      "card_name": "삼성 VISA 카드",
+      "min_price": 100,
+      "discount": 16,
+      "note": "해외직구 상품 전용"
+    },
+    {
+      "card_name": "UnionPay 카드",
+      "min_price": 100,
+      "discount": 16,
+      "note": "해외직구 상품 전용"
+    },
+    {
+      "card_name": "신한카드",
+      "min_price": 100,
+      "discount": 15,
+      "note": "해외직구 상품 전용"
+    },
+    {
+      "card_name": "BC Mastercard",
+      "min_price": 100,
+      "discount": 15,
+      "note": "해외직구 상품 전용"
+    },
+    {
+      "card_name": "NH농협카드",
+      "min_price": 100,
+      "discount": 15,
+      "note": "해외직구 상품 전용"
+    },
+    {
+      "card_name": "하나 VISA 카드",
+      "min_price": 100,
+      "discount": 15,
+      "note": "해외직구 상품 전용"
+    },
+    {
+      "card_name": "신한 Mastercard",
+      "min_price": 100,
+      "discount": 15,
+      "note": "해외직구 상품 전용"
+    },
+    {
+      "card_name": "우리 Mastercard",
+      "min_price": 100,
+      "discount": 15,
+      "note": "해외직구 상품 전용"
+    },
+    {
+      "card_name": "신한 VISA 카드",
+      "min_price": 100,
+      "discount": 15,
+      "note": "해외직구 상품 전용"
+    },
+    {
+      "card_name": "알리익스프레스 신한카드 (신규)",
+      "min_price": 50,
+      "discount": 20,
+      "note": "해외직구 상품 전용, 신규 발급 고객 대상"
+    },
+    {
+      "card_name": "토스뱅크 Mastercard",
+      "min_price": 50,
+      "discount": 8,
+      "note": "해외직구 상품 전용"
+    },
+    {
+      "card_name": "IBK Mastercard",
+      "min_price": 50,
+      "discount": 8,
+      "note": "해외직구 상품 전용"
+    },
+    {
+      "card_name": "롯데 Mastercard",
+      "min_price": 50,
+      "discount": 8,
+      "note": "해외직구 상품 전용"
+    },
+    {
+      "card_name": "알리익스프레스 신한카드",
+      "min_price": 50,
+      "discount": 8,
+      "note": "해외직구 상품 전용"
     }
   ]
 }
