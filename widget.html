@@ -29,13 +29,23 @@
         const EXCHANGE_RATE = 1430;
         const COIN_VALUE = 0.01;
 
-        async function copyAndGo(code, url) {
+        function copyAndGo(code, url) {
             if (code) {
+                // 임시 textarea 생성하여 복사
+                const textarea = document.createElement('textarea');
+                textarea.value = code;
+                textarea.style.position = 'fixed';
+                textarea.style.opacity = '0';
+                document.body.appendChild(textarea);
+                textarea.select();
+                
                 try {
-                    await navigator.clipboard.writeText(code);
+                    document.execCommand('copy');
                     alert(`✅ 쿠폰 코드 "${code}"가 복사되었습니다!\n\n상품 페이지로 이동합니다.`);
                 } catch (err) {
                     alert('쿠폰 코드 복사 실패. 수동으로 복사해주세요: ' + code);
+                } finally {
+                    document.body.removeChild(textarea);
                 }
             }
             window.open(url, '_blank');
@@ -323,7 +333,7 @@
                                                     if (nextCodeInfo) {
                                                         return `
                                                         <div class="mt-2 p-2 bg-red-100 rounded text-xs mobile-text-sm text-red-700">
-                                                            💡 <strong>$${nextCodeInfo.amountNeeded.toFixed(2)}</strong> 더 구매하면 <strong>$${nextCodeInfo.nextTier.discount}</strong> 할인 가능!
+                                                            💡 <strong>${nextCodeInfo.amountNeeded.toFixed(2)}</strong> 더 구매하면 <strong>${nextCodeInfo.nextTier.code}</strong> 코드로 <strong>${nextCodeInfo.nextTier.discount}</strong> 할인 가능!
                                                         </div>`;
                                                     }
                                                     return '';
@@ -374,7 +384,7 @@
                                                 </div>
                                                 ${nextCardInfo ? `
                                                 <div class="mt-2 p-2 bg-purple-100 rounded text-xs mobile-text-sm text-purple-700">
-                                                    💡 <strong>$${nextCardInfo.amountNeeded.toFixed(2)}</strong> 더 구매하면 <strong>$${nextCardInfo.nextTier.discount}</strong> 카드 할인 가능!
+                                                    💡 <strong>${nextCardInfo.amountNeeded.toFixed(2)}</strong> 더 구매하면 <strong>${nextCardInfo.nextTier.card_name}</strong>으로 <strong>${nextCardInfo.nextTier.discount}</strong> 카드 할인 가능!
                                                 </div>
                                                 ` : ''}
                                             </div>
