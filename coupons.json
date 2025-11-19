@@ -1,72 +1,66 @@
 {
-    "promotion": {
-    "name": "1년중 최대 할인, 11.11 광군제💶 미리보기",
-    "start_date": "2025-11-07",
-    "end_date": "2025-11-18"
+  "promotion": {
+    "name": "2025년 마지막 할인 행사 블랙 프라이데이 세일",
+    "start_date": "2025-11-19",
+    "end_date": "2025-12-03"
   },
   "discount_codes": [
     {
-      "code": "AEKS04",
+      "code": "AEPPOM04",
       "min_price": 25,
       "discount": 4,
       "note": "일부상품 적용 불가"
     },
     {
-      "code": "AEKS06",
+      "code": "AEPPOM06",
       "min_price": 38,
       "discount": 6,
       "note": "일부상품 적용 불가"
     },
     {
-      "code": "AEKS08",
-      "min_price": 54,
+      "code": "AEPPOM08",
+      "min_price": 55,
       "discount": 8,
       "note": "일부상품 적용 불가"
     },
     {
-      "code": "AEKS13",
+      "code": "AEPPOM12",
       "min_price": 89,
-      "discount": 13,
+      "discount": 12,
       "note": "일부상품 적용 불가"
     },
     {
-      "code": "AEKS20",
+      "code": "AEPPOM19",
       "min_price": 139,
-      "discount": 20,
+      "discount": 19,
       "note": "일부상품 적용 불가"
     },
     {
-      "code": "AEKS31",
+      "code": "AEPPOM29",
       "min_price": 209,
-      "discount": 31,
+      "discount": 29,
       "note": "일부상품 적용 불가"
     },
     {
-      "code": "AEKS52",
+      "code": "AEPPOM48",
       "min_price": 349,
-      "discount": 52,
+      "discount": 48,
       "note": "일부상품 적용 불가"
     },
     {
-      "code": "AEKS83",
+      "code": "AEPPOM78",
       "min_price": 559,
-      "discount": 83,
+      "discount": 78,
       "note": "일부상품 적용 불가"
     },
     {
-      "code": "AEK102",
+      "code": "AEPPOM95",
       "min_price": 679,
-      "discount": 102,
+      "discount": 95,
       "note": "일부상품 적용 불가"
     }
   ],
   "card_discounts": [
-    {
-      "card_name": "삼성 iD SELECT ON Card Mastercard",
-      "min_price": 300,
-      "discount": 60,
-      "note": "해외직구 상품 전용"
-    },
     {
       "card_name": "하나 트래블GO VISA 카드",
       "min_price": 150,
@@ -76,29 +70,23 @@
     {
       "card_name": "네이버페이",
       "min_price": 130,
-      "discount": 9,
-      "note": "해외직구 상품 전용"
+      "discount": 10,
+      "note": "전상품 적용 가능"
     },
     {
       "card_name": "카카오페이",
       "min_price": 110,
       "discount": 11,
-      "note": "해외직구 상품 전용"
+      "note": "전상품 적용 가능"
     },
     {
       "card_name": "토스페이",
       "min_price": 100,
       "discount": 11,
-      "note": "해외직구 상품 전용"
+      "note": "전상품 적용 가능"
     },
     {
       "card_name": "KB Mastercard",
-      "min_price": 100,
-      "discount": 16,
-      "note": "해외직구 상품 전용"
-    },
-    {
-      "card_name": "삼성 Mastercard",
       "min_price": 100,
       "discount": 16,
       "note": "해외직구 상품 전용"
@@ -116,6 +104,12 @@
       "note": "해외직구 상품 전용"
     },
     {
+      "card_name": "삼성 Mastercard",
+      "min_price": 100,
+      "discount": 16,
+      "note": "해외직구 상품 전용"
+    },
+    {
       "card_name": "UnionPay 카드",
       "min_price": 100,
       "discount": 16,
@@ -123,12 +117,6 @@
     },
     {
       "card_name": "신한카드",
-      "min_price": 100,
-      "discount": 15,
-      "note": "해외직구 상품 전용"
-    },
-    {
-      "card_name": "BC Mastercard",
       "min_price": 100,
       "discount": 15,
       "note": "해외직구 상품 전용"
@@ -146,28 +134,16 @@
       "note": "해외직구 상품 전용"
     },
     {
-      "card_name": "신한 Mastercard",
-      "min_price": 100,
-      "discount": 15,
-      "note": "해외직구 상품 전용"
-    },
-    {
       "card_name": "우리 Mastercard",
       "min_price": 100,
       "discount": 15,
       "note": "해외직구 상품 전용"
     },
     {
-      "card_name": "신한 VISA 카드",
+      "card_name": "하나 Mastercard",
       "min_price": 100,
       "discount": 15,
       "note": "해외직구 상품 전용"
-    },
-    {
-      "card_name": "알리익스프레스 신한카드 (신규)",
-      "min_price": 50,
-      "discount": 20,
-      "note": "해외직구 상품 전용, 신규 발급 고객 대상"
     },
     {
       "card_name": "토스뱅크 Mastercard",
@@ -188,7 +164,7 @@
       "note": "해외직구 상품 전용"
     },
     {
-      "card_name": "알리익스프레스 신한카드",
+      "card_name": "BC Baro Mastercard",
       "min_price": 50,
       "discount": 8,
       "note": "해외직구 상품 전용"
