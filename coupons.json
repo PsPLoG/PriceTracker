@@ -12,6 +12,12 @@
       "note": "일부상품 적용 불가"
     },
     {
+      "code": "BFKR27",
+      "min_price": 150,
+      "discount": 27,
+      "note": "선착순 코드 소진시 불가"
+    },
+    {
       "code": "AEPPOM06",
       "min_price": 38,
       "discount": 6,
