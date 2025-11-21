@@ -40,9 +40,8 @@
 
             try {
                 document.execCommand('copy');
-                alert(`✅ 쿠폰 코드 "${code}"가 복사되었습니다!\n\n상품 페이지로 이동합니다.`);
             } catch (err) {
-                alert('쿠폰 코드 복사 실패. 수동으로 복사해주세요: ' + code);
+                console.log('쿠폰 코드 복사 실패');
             } finally {
                 document.body.removeChild(textarea);
             }
