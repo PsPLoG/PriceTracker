@@ -314,21 +314,46 @@
 
     function updateIframeHeight() {
         try {
+            const container = document.getElementById('banner-container');
             const height = Math.max(
                 document.body.scrollHeight,
                 document.documentElement.scrollHeight,
                 document.body.offsetHeight,
-                document.documentElement.offsetHeight
+                document.documentElement.offsetHeight,
+                container ? container.scrollHeight + 20 : 0
             );
             window.parent.postMessage({ type: 'resize', height: height }, '*');
         } catch (e) {}
     }
 
+    function waitForImages() {
+        const images = document.querySelectorAll('img');
+        const promises = Array.from(images).map(img => {
+            if (img.complete) return Promise.resolve();
+            return new Promise((resolve) => {
+                img.onload = resolve;
+                img.onerror = resolve;
+            });
+        });
+        return Promise.all(promises);
+    }
+
     async function init() {
         await loadBanner();
+
+        // 초기 높이 측정
+        updateIframeHeight();
+
+        // 이미지 로드 대기 후 재측정
+        await waitForImages();
+        updateIframeHeight();
+
+        // 추가 재시도 (레이아웃 안정화 대기)
         setTimeout(updateIframeHeight, 100);
         setTimeout(updateIframeHeight, 300);
         setTimeout(updateIframeHeight, 500);
+        setTimeout(updateIframeHeight, 1000);
+        setTimeout(updateIframeHeight, 2000);
     }
 
     init();
