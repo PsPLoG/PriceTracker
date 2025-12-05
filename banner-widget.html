@@ -1,0 +1,338 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>배너 위젯</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body {
+            background: transparent;
+            margin: 0;
+            padding: 0;
+        }
+
+        .banner-container {
+            width: 100%;
+            max-width: 300px;
+            margin: 0 auto;
+        }
+
+        .product-card {
+            position: relative;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            cursor: pointer;
+        }
+
+        .product-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
+        }
+
+        .product-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.7);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 1rem;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+            border-radius: 1rem;
+        }
+
+        .product-card:hover .product-overlay {
+            opacity: 1;
+        }
+
+        .price-badge {
+            animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% {
+                opacity: 1;
+            }
+            50% {
+                opacity: 0.8;
+            }
+        }
+
+        .discount-tag {
+            backdrop-filter: blur(8px);
+        }
+
+        .product-grid {
+            display: grid;
+            gap: 1rem;
+            grid-template-columns: 1fr;
+        }
+
+        .line-clamp-2 {
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+    </style>
+</head>
+<body>
+<div id="banner-container" class="banner-container p-2"></div>
+
+<script>
+    const params = new URLSearchParams(window.location.search);
+    const count = parseInt(params.get('count')) || 3; // 기본 3개
+    const EXCHANGE_RATE = 1430;
+    const COIN_VALUE = 0.01;
+
+    function getPromotionStatus(promotion) {
+        if (!promotion || !promotion.start_date || !promotion.end_date) {
+            return { status: 'none' };
+        }
+        const now = new Date();
+        const start = new Date(promotion.start_date);
+        const end = new Date(promotion.end_date);
+        end.setHours(23, 59, 59, 999);
+
+        if (now < start) {
+            const daysLeft = Math.ceil((start - now) / (1000 * 60 * 60 * 24));
+            return { status: 'upcoming', daysLeft };
+        } else if (now >= start && now <= end) {
+            const daysLeft = Math.ceil((end - now) / (1000 * 60 * 60 * 24));
+            return { status: 'active', daysLeft };
+        } else {
+            return { status: 'expired' };
+        }
+    }
+
+    function findBestDiscountCode(price, discountCodes) {
+        const applicable = discountCodes.filter(c => price >= c.min_price);
+        if (applicable.length === 0) return null;
+        return applicable.reduce((best, current) =>
+            current.discount > best.discount ? current : best
+        );
+    }
+
+    function calculateFinalPrice(product, coupons) {
+        const originalPrice = product.original_price;
+
+        // 셀러 쿠폰 적용
+        let afterSellerCoupon = originalPrice;
+        if (product.seller_coupon && product.seller_coupon.discount > 0) {
+            afterSellerCoupon = originalPrice - product.seller_coupon.discount;
+        }
+
+        // 할인 코드 적용
+        const bestCode = findBestDiscountCode(afterSellerCoupon, coupons.discount_codes);
+        const afterCode = bestCode ? afterSellerCoupon - bestCode.discount : afterSellerCoupon;
+
+        // 코인 할인 적용
+        const coinDiscountedPrice = afterCode * (1 - product.coin_discount_percent / 100);
+
+        return {
+            original: originalPrice,
+            final: product.coin_discount_percent > 0 ? coinDiscountedPrice : afterCode,
+            discountPercent: Math.round(((originalPrice - (product.coin_discount_percent > 0 ? coinDiscountedPrice : afterCode)) / originalPrice) * 100),
+            hasCoinDiscount: product.coin_discount_percent > 0
+        };
+    }
+
+    function toKRW(usd) {
+        return Math.round(usd * EXCHANGE_RATE).toLocaleString('ko-KR');
+    }
+
+    function renderProductCard(product, productId, prices, promotionStatus, couponsData) {
+        const productLink = product.links[0];
+        const detailLink = `https://guiita.tistory.com/${productId}`;
+
+        return `
+            <div class="product-card bg-white rounded-2xl shadow-xl overflow-hidden border-2 border-gray-200">
+                <!-- 프로모션 배지 -->
+                ${promotionStatus.status === 'active' ? `
+                    <div class="bg-gradient-to-r from-red-500 to-orange-500 text-white text-center py-1.5 px-2">
+                        <div class="font-bold text-xs">🎉 ${couponsData.promotion.name}</div>
+                    </div>
+                ` : ''}
+
+                <!-- 상품 이미지 -->
+                <div class="relative">
+                    ${product.image ? `
+                        <img src="${product.image}" alt="${product.name}" class="w-full h-48 object-cover">
+                    ` : `
+                        <div class="w-full h-48 bg-gradient-to-br from-gray-200 to-gray-300 flex items-center justify-center">
+                            <span class="text-gray-400 text-3xl">📦</span>
+                        </div>
+                    `}
+
+                    <!-- 할인율 배지 -->
+                    ${prices.discountPercent > 0 ? `
+                        <div class="absolute top-2 right-2 bg-red-600 text-white font-bold px-3 py-1.5 rounded-full shadow-lg price-badge discount-tag">
+                            <div class="text-lg">${prices.discountPercent}%</div>
+                            <div class="text-xs">OFF</div>
+                        </div>
+                    ` : ''}
+
+                    <!-- 호버 오버레이 -->
+                    <div class="product-overlay">
+                        <button onclick="window.open('${productLink}', '_blank')" class="bg-gradient-to-r from-orange-500 to-red-500 hover:from-orange-600 hover:to-red-600 text-white font-bold py-3 px-6 rounded-lg shadow-lg transition-all transform hover:scale-105 flex items-center gap-2 z-10">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"/>
+                            </svg>
+                            구매하기
+                        </button>
+                        <button onclick="window.open('${detailLink}', '_blank')" class="bg-white hover:bg-gray-100 text-gray-800 font-bold py-3 px-6 rounded-lg shadow-lg transition-all transform hover:scale-105 flex items-center gap-2 z-10">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                            </svg>
+                            상세보기
+                        </button>
+                    </div>
+                </div>
+
+                <!-- 상품 정보 -->
+                <div class="p-3">
+                    <h3 class="font-bold text-sm text-gray-800 mb-2 line-clamp-2 leading-tight">
+                        ${product.name}
+                    </h3>
+
+                    <!-- 가격 정보 -->
+                    <div class="space-y-1.5">
+                        ${prices.discountPercent > 0 ? `
+                            <div class="flex justify-between items-center">
+                                <span class="text-xs text-gray-500">정가</span>
+                                <div class="text-right">
+                                    <span class="text-xs text-gray-400 line-through">$${prices.original.toFixed(2)}</span>
+                                </div>
+                            </div>
+                        ` : ''}
+
+                        <div class="bg-gradient-to-r from-orange-50 to-red-50 rounded-lg p-2 border border-orange-300">
+                            <div class="flex justify-between items-center">
+                                <span class="text-xs font-semibold text-orange-800">
+                                    ${prices.discountPercent > 0 ? '할인가' : '가격'}
+                                </span>
+                                <div class="text-right">
+                                    <div class="text-lg font-bold text-orange-600">$${prices.final.toFixed(2)}</div>
+                                    <div class="text-xs text-orange-500">${toKRW(prices.final)}원</div>
+                                </div>
+                            </div>
+                        </div>
+
+                        ${prices.discountPercent > 0 ? `
+                            <div class="bg-green-50 rounded-lg p-1.5 text-center border border-green-300">
+                                <div class="text-green-700 font-bold text-sm">
+                                    $${(prices.original - prices.final).toFixed(2)} 절약
+                                </div>
+                            </div>
+                        ` : ''}
+                    </div>
+                </div>
+            </div>
+        `;
+    }
+
+    async function loadBanner() {
+        const container = document.getElementById('banner-container');
+
+        container.innerHTML = `
+            <div class="flex items-center justify-center p-8 bg-gray-100 rounded-lg">
+                <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-orange-500"></div>
+            </div>
+        `;
+
+        try {
+            const [productsRes, couponsRes] = await Promise.all([
+                fetch('https://script.google.com/macros/s/AKfycbyoaxpTkVcLZrfxJhMVbnCXy0UIkpj8w8hKiW5_uD-AZZg2LdEe-s1kg5tsOKZRrtmFFQ/exec'),
+                fetch('coupons.json')
+            ]);
+
+            if (!productsRes.ok) {
+                throw new Error('상품 정보를 불러올 수 없습니다.');
+            }
+
+            const productsData = await productsRes.json();
+            const productIds = Object.keys(productsData.products);
+
+            if (productIds.length === 0) {
+                throw new Error('표시할 상품이 없습니다.');
+            }
+
+            // 랜덤하게 선택 (기본 3개, 파라미터로 조절 가능)
+            const shuffled = productIds.sort(() => Math.random() - 0.5);
+            const selectedIds = shuffled.slice(0, count);
+
+            let couponsData = { promotion: null, discount_codes: [], card_discounts: [] };
+            let promotionStatus = { status: 'none' };
+
+            if (couponsRes.ok) {
+                try {
+                    const data = await couponsRes.json();
+                    if (data.promotion) {
+                        promotionStatus = getPromotionStatus(data.promotion);
+                        if (promotionStatus.status === 'active' || promotionStatus.status === 'upcoming') {
+                            couponsData.promotion = data.promotion;
+                            couponsData.discount_codes = data.discount_codes || [];
+                            couponsData.card_discounts = data.card_discounts || [];
+                        }
+                    }
+                } catch (e) {
+                    console.log('쿠폰 파일 파싱 실패');
+                }
+            }
+
+            const productsHTML = selectedIds.map(id => {
+                const product = productsData.products[id];
+                const prices = calculateFinalPrice(product, couponsData);
+                return renderProductCard(product, id, prices, promotionStatus, couponsData);
+            }).join('');
+
+            container.innerHTML = `
+                <div class="product-grid">
+                    ${productsHTML}
+                </div>
+            `;
+
+            updateIframeHeight();
+
+        } catch (error) {
+            container.innerHTML = `
+                <div class="p-4 bg-red-50 border-2 border-red-300 rounded-lg">
+                    <div class="text-red-700 text-sm text-center">
+                        <span class="block mb-1">❌</span>
+                        <span>${error.message}</span>
+                    </div>
+                </div>
+            `;
+        }
+    }
+
+    function updateIframeHeight() {
+        try {
+            const height = Math.max(
+                document.body.scrollHeight,
+                document.documentElement.scrollHeight,
+                document.body.offsetHeight,
+                document.documentElement.offsetHeight
+            );
+            window.parent.postMessage({ type: 'resize', height: height }, '*');
+        } catch (e) {}
+    }
+
+    async function init() {
+        await loadBanner();
+        setTimeout(updateIframeHeight, 100);
+        setTimeout(updateIframeHeight, 300);
+        setTimeout(updateIframeHeight, 500);
+    }
+
+    init();
+    window.addEventListener('resize', updateIframeHeight);
+    window.addEventListener('load', () => setTimeout(updateIframeHeight, 500));
+</script>
+</body>
+</html>
