@@ -72,6 +72,7 @@
         }
         const now = new Date();
         const start = new Date(promotion.start_date);
+        start.setHours(0, 0, 0, 0);
         const end = new Date(promotion.end_date);
         end.setHours(23, 59, 59, 999);
 
