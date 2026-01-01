@@ -125,7 +125,7 @@
             : afterSellerCoupon;
 
         // 3. 코인 할인 적용 (마지막)
-        const coinDiscountedPrice = afterCode * (1 - product.coin_discount_percent / 100);
+        const coinDiscountedPrice = originalPrice * (1 - product.coin_discount_percent / 100);
 
         const applicableCards = getApplicableCardDiscounts(afterCode, coupons.card_discounts);
 
@@ -136,7 +136,7 @@
             afterCoin: coinDiscountedPrice,
             bestCode: bestCode,
             applicableCards: applicableCards,
-            coinAmount: Math.round((afterCode * product.coin_discount_percent / 100) / COIN_VALUE),
+            coinAmount: Math.round((originalPrice * product.coin_discount_percent / 100) / COIN_VALUE),
             sellerCoupon: product.seller_coupon
         };
     }
@@ -313,7 +313,7 @@
                                             </div>
                                             <code class="inline-block px-3 py-1 bg-white rounded font-mono text-sm mobile-text-sm font-bold text-red-600 border border-red-400 select-all">${prices.bestCode.code}</code>
                                             <div class="text-xs mobile-text-sm text-red-600 mt-2">${prices.bestCode.note}</div>
-                                            <div class="text-sm mobile-text-sm text-red-700 mt-1">${prices.bestCode.min_price} 이상 구매 시 ${prices.bestCode.discount} 할인</div>
+                                            <div class="text-sm mobile-text-sm text-red-700 mt-1">$${prices.bestCode.min_price} 이상 구매 시 $${prices.bestCode.discount} 할인</div>
                                             ${(() => {
                                                 const nextCodeInfo = getNextTierInfo(prices.afterSellerCoupon, couponsData.discount_codes);
                                                 if (nextCodeInfo) {
@@ -376,7 +376,7 @@
                                                     <div class="font-semibold text-purple-900 mobile-text-sm">${card.card_name}</div>
                                                     <div class="text-xs mobile-text-sm text-purple-600 mt-1">${card.note}</div>
                                                     <div class="text-sm mobile-text-sm text-purple-700 mt-1">
-                                                        ${card.min_price} 이상 → <span class="font-bold text-purple-900">${finalPrice.toFixed(2)}</span>
+                                                        $${card.min_price} 이상 → <span class="font-bold text-purple-900">$${finalPrice.toFixed(2)}</span>
                                                         <div class="text-xs mobile-text-sm text-purple-600 mt-0.5">(약 ${toKRW(finalPrice)}원)</div>
                                                     </div>
                                                 </div>
@@ -407,7 +407,7 @@
                                                         <div class="font-semibold text-purple-900 mobile-text-sm">${card.card_name}</div>
                                                         <div class="text-xs mobile-text-sm text-purple-600 mt-1">${card.note}</div>
                                                         <div class="text-sm mobile-text-sm text-purple-700 mt-1">
-                                                            ${card.min_price} 이상 → <span class="font-bold text-purple-900">${finalPrice.toFixed(2)}</span>
+                                                            $${card.min_price} 이상 → <span class="font-bold text-purple-900">$${finalPrice.toFixed(2)}</span>
                                                             <div class="text-xs mobile-text-sm text-purple-600 mt-0.5">(약 ${toKRW(finalPrice)}원)</div>
                                                         </div>
                                                     </div>
