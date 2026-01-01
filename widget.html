@@ -125,7 +125,8 @@
             : afterSellerCoupon;
 
         // 3. 코인 할인 적용 (마지막)
-        const coinDiscountedPrice = originalPrice * (1 - product.coin_discount_percent / 100);
+        const coinDiscountAmount = originalPrice * product.coin_discount_percent / 100;
+        const coinDiscountedPrice = afterCode - coinDiscountAmount;
 
         const applicableCards = getApplicableCardDiscounts(afterCode, coupons.card_discounts);
 

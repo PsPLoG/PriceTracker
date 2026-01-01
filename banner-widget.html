@@ -133,7 +133,8 @@
         const afterCode = bestCode ? afterSellerCoupon - bestCode.discount : afterSellerCoupon;
 
         // 코인 할인 적용
-        const coinDiscountedPrice = originalPrice * (1 - product.coin_discount_percent / 100);
+        const coinDiscountAmount = originalPrice * product.coin_discount_percent / 100;
+        const coinDiscountedPrice = afterCode - coinDiscountAmount;
 
         return {
             original: originalPrice,
