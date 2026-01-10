@@ -1,54 +1,54 @@
 {
   "promotion": {
-    "name": "1월 Choice day",
-    "start_date": "2026-01-01",
-    "end_date": "2026-01-07"
+    "name": "겨울 클리어런스",
+    "start_date": "2026-01-12",
+    "end_date": "2026-01-18"
   },
   "discount_codes": [
     {
-      "code": "PPOMKR03",
-      "min_price": 23,
+      "code": "AEPPOM03",
+      "min_price": 22,
       "discount": 3,
       "note": "일부상품 적용 불가"
     },
     {
-      "code": "PPOMKR05",
-      "min_price": 38,
+      "code": "AEPPOM05",
+      "min_price": 36,
       "discount": 5,
       "note": "일부상품 적용 불가"
     },
     {
-      "code": "PPOMKR07",
-      "min_price": 58,
+      "code": "AEPPOM07",
+      "min_price": 56,
       "discount": 7,
       "note": "일부상품 적용 불가"
     },
     {
-      "code": "PPOMKR10",
+      "code": "AEPPOM11",
       "min_price": 89,
-      "discount": 10,
+      "discount": 11,
       "note": "일부상품 적용 불가"
     },
     {
-      "code": "PPOMKR16",
+      "code": "AEPPOM17",
       "min_price": 139,
-      "discount": 16,
+      "discount": 17,
       "note": "일부상품 적용 불가"
     },
     {
-      "code": "PPOMKR27",
+      "code": "AEPPOM27",
       "min_price": 239,
       "discount": 27,
       "note": "일부상품 적용 불가"
     },
     {
-      "code": "PPOMKR38",
+      "code": "AEPPOM38",
       "min_price": 349,
       "discount": 38,
       "note": "일부상품 적용 불가"
     },
     {
-      "code": "PPOMKR60",
+      "code": "AEPPOM60",
       "min_price": 559,
       "discount": 60,
       "note": "일부상품 적용 불가"
@@ -56,9 +56,15 @@
   ],
   "card_discounts": [
     {
-      "card_name": "네이버페이",
-      "min_price": 70,
-      "discount": 4,
+      "card_name": "삼성 Mastercard",
+      "min_price": 100,
+      "discount": 13,
+      "note": "전상품 적용 가능"
+    },
+    {
+      "card_name": "BC Baro Mastercard",
+      "min_price": 60,
+      "discount": 9,
       "note": "전상품 적용 가능"
     }
   ]
