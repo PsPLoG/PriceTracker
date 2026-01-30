@@ -1,71 +1,65 @@
 {
   "promotion": {
-    "name": "겨울 클리어런스",
-    "start_date": "2026-01-12",
-    "end_date": "2026-01-18"
+    "name": "사랑가득 선물대전",
+    "start_date": "2026-02-01",
+    "end_date": "2026-02-07"
   },
   "discount_codes": [
     {
-      "code": "AEPPOM03",
-      "min_price": 22,
-      "discount": 3,
+      "code": "PPOMKR02",
+      "min_price": 19,
+      "discount": 2,
       "note": "일부상품 적용 불가"
     },
     {
-      "code": "AEPPOM05",
-      "min_price": 36,
-      "discount": 5,
+      "code": "PPOMKR04",
+      "min_price": 34,
+      "discount": 4,
       "note": "일부상품 적용 불가"
     },
     {
-      "code": "AEPPOM07",
-      "min_price": 56,
-      "discount": 7,
+      "code": "PPOMKR06",
+      "min_price": 53,
+      "discount": 6,
       "note": "일부상품 적용 불가"
     },
     {
-      "code": "AEPPOM11",
-      "min_price": 89,
-      "discount": 11,
+      "code": "PPOMKR09",
+      "min_price": 86,
+      "discount": 9,
       "note": "일부상품 적용 불가"
     },
     {
-      "code": "AEPPOM17",
+      "code": "PPOMKR15",
       "min_price": 139,
-      "discount": 17,
+      "discount": 15,
       "note": "일부상품 적용 불가"
     },
     {
-      "code": "AEPPOM27",
+      "code": "PPOMKR26",
       "min_price": 239,
-      "discount": 27,
+      "discount": 26,
       "note": "일부상품 적용 불가"
     },
     {
-      "code": "AEPPOM38",
-      "min_price": 349,
-      "discount": 38,
+      "code": "PPOMKR34",
+      "min_price": 332,
+      "discount": 34,
       "note": "일부상품 적용 불가"
     },
     {
-      "code": "AEPPOM60",
-      "min_price": 559,
-      "discount": 60,
+      "code": "PPOMKR54",
+      "min_price": 529,
+      "discount": 54,
       "note": "일부상품 적용 불가"
     }
   ],
   "card_discounts": [
     {
-      "card_name": "삼성 Mastercard",
-      "min_price": 100,
-      "discount": 13,
-      "note": "전상품 적용 가능"
-    },
-    {
-      "card_name": "BC Baro Mastercard",
-      "min_price": 60,
-      "discount": 9,
-      "note": "전상품 적용 가능"
+      "card_name": "유니온페이",
+      "min_price": 70,
+      "discount": 10,
+      "note": "한국 배송 상품 제외 적용 가능"
     }
   ]
 }
