@@ -227,18 +227,47 @@
 
                     <div class="p-6">
                         ${promotionStatus.status === 'upcoming' ? `
-                            <div class="mb-4 p-4 mobile-p-3 bg-gradient-to-r from-blue-50 to-indigo-50 rounded-lg border-2 border-blue-400 text-center">
-                                <div class="text-blue-800 font-bold text-xl mobile-text-lg mb-2">🎉 ${couponsData.promotion.name}</div>
-                                <div class="text-blue-600 text-sm mobile-text-sm mb-2">${formatDate(couponsData.promotion.start_date)} ~ ${formatDate(couponsData.promotion.end_date)}</div>
-                                <div class="bg-white rounded-lg p-3 inline-block border-2 border-blue-300">
-                                    <div class="text-blue-500 text-sm mobile-text-sm mb-1">프로모션 시작까지</div>
-                                    <div class="text-4xl mobile-text-3xl font-bold text-blue-700">D-${promotionStatus.daysLeft}</div>
+                            <div class="mb-6 p-5 mobile-p-4 bg-gradient-to-r from-blue-50 to-indigo-50 rounded-xl border-2 border-blue-300 shadow-lg">
+                                <div class="text-center mb-4">
+                                    <div class="inline-flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg mb-3">
+                                        <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                                            <path d="M10 2a6 6 0 00-6 6v3.586l-.707.707A1 1 0 004 14h12a1 1 0 00.707-1.707L16 11.586V8a6 6 0 00-6-6zM10 18a3 3 0 01-3-3h6a3 3 0 01-3 3z"/>
+                                        </svg>
+                                        <span class="font-bold text-sm">곧 시작됩니다</span>
+                                    </div>
+                                    <h3 class="text-blue-900 font-bold text-2xl mobile-text-xl mb-2">${couponsData.promotion.name}</h3>
+                                    <div class="text-blue-700 text-sm mobile-text-sm mb-4">
+                                        ${formatDate(couponsData.promotion.start_date)} ~ ${formatDate(couponsData.promotion.end_date)}
+                                    </div>
+                                </div>
+                                <div class="bg-white rounded-xl p-4 border-2 border-blue-200 shadow-inner">
+                                    <div class="text-center">
+                                        <div class="text-blue-600 text-sm mobile-text-sm font-semibold mb-2">프로모션 시작까지</div>
+                                        <div class="text-5xl mobile-text-4xl font-black text-blue-600 mb-2">D-${promotionStatus.daysLeft}</div>
+                                        <div id="countdown-upcoming" class="text-blue-600 text-lg mobile-text-base font-semibold" data-target="${promotionStatus.start.getTime()}"></div>
+                                    </div>
                                 </div>
                             </div>
                         ` : promotionStatus.status === 'active' ? `
-                            <div class="mb-4 p-3 mobile-p-3 bg-gradient-to-r from-orange-50 to-red-50 rounded-lg border-2 border-orange-400 text-center">
-                                <div class="text-orange-700 font-bold text-lg mobile-text-base">${couponsData.promotion.name}</div>
-                                <div class="text-orange-600 text-sm mobile-text-sm mt-1">${formatDate(couponsData.promotion.start_date)} ~ ${formatDate(couponsData.promotion.end_date)}</div>
+                            <div class="mb-6 p-5 mobile-p-4 bg-gradient-to-r from-orange-50 to-red-50 rounded-xl border-2 border-orange-400 shadow-lg">
+                                <div class="text-center mb-3">
+                                    <div class="inline-flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-orange-500 to-red-500 text-white rounded-lg mb-3">
+                                        <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                                            <path fill-rule="evenodd" d="M5 2a1 1 0 011 1v1h1a1 1 0 010 2H6v1a1 1 0 01-2 0V6H3a1 1 0 010-2h1V3a1 1 0 011-1zm0 10a1 1 0 011 1v1h1a1 1 0 110 2H6v1a1 1 0 11-2 0v-1H3a1 1 0 110-2h1v-1a1 1 0 011-1zM12 2a1 1 0 01.967.744L14.146 7.2 17.5 9.134a1 1 0 010 1.732l-3.354 1.935-1.18 4.455a1 1 0 01-1.933 0L9.854 12.8 6.5 10.866a1 1 0 010-1.732l3.354-1.935 1.18-4.455A1 1 0 0112 2z" clip-rule="evenodd"/>
+                                        </svg>
+                                        <span class="font-bold text-sm">진행중</span>
+                                    </div>
+                                    <h3 class="text-orange-900 font-bold text-2xl mobile-text-xl mb-2">${couponsData.promotion.name}</h3>
+                                    <div class="bg-white rounded-lg px-4 py-2 inline-block border border-orange-300 shadow-sm mb-3">
+                                        <div class="text-orange-700 text-base mobile-text-sm font-semibold">
+                                            📅 ${formatDate(couponsData.promotion.start_date)} ~ ${formatDate(couponsData.promotion.end_date)}
+                                        </div>
+                                    </div>
+                                    <div class="bg-white rounded-xl p-3 border-2 border-orange-200">
+                                        <div class="text-orange-600 text-sm mobile-text-sm font-semibold mb-1">⏰ 종료까지 남은 시간</div>
+                                        <div id="countdown-active" class="text-orange-600 text-xl mobile-text-lg font-bold" data-target="${promotionStatus.end.getTime()}"></div>
+                                    </div>
+                                </div>
                             </div>
                         ` : ''}
 
@@ -465,6 +494,45 @@
         }
     }
 
+    function updateCountdown() {
+        const countdownUpcoming = document.getElementById('countdown-upcoming');
+        const countdownActive = document.getElementById('countdown-active');
+
+        if (countdownUpcoming) {
+            const target = parseInt(countdownUpcoming.dataset.target);
+            const now = new Date().getTime();
+            const diff = target - now;
+
+            if (diff > 0) {
+                const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+                const hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+                const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+                const seconds = Math.floor((diff % (1000 * 60)) / 1000);
+
+                countdownUpcoming.textContent = `${days}일 ${hours}시간 ${minutes}분 ${seconds}초`;
+            } else {
+                countdownUpcoming.textContent = '시작되었습니다!';
+            }
+        }
+
+        if (countdownActive) {
+            const target = parseInt(countdownActive.dataset.target);
+            const now = new Date().getTime();
+            const diff = target - now;
+
+            if (diff > 0) {
+                const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+                const hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+                const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+                const seconds = Math.floor((diff % (1000 * 60)) / 1000);
+
+                countdownActive.textContent = `${days}일 ${hours}시간 ${minutes}분 ${seconds}초`;
+            } else {
+                countdownActive.textContent = '종료되었습니다!';
+            }
+        }
+    }
+
     function updateIframeHeight() {
         try {
             const height = Math.max(
@@ -479,6 +547,11 @@
 
     async function init() {
         await loadWidget();
+
+        // 카운트다운 시작
+        updateCountdown();
+        setInterval(updateCountdown, 1000);
+
         setTimeout(updateIframeHeight, 100);
         setTimeout(updateIframeHeight, 300);
         setTimeout(updateIframeHeight, 500);

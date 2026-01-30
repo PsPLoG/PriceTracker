@@ -102,10 +102,10 @@
 
         if (now < start) {
             const daysLeft = Math.ceil((start - now) / (1000 * 60 * 60 * 24));
-            return { status: 'upcoming', daysLeft };
+            return { status: 'upcoming', daysLeft, start, end };
         } else if (now >= start && now <= end) {
             const daysLeft = Math.ceil((end - now) / (1000 * 60 * 60 * 24));
-            return { status: 'active', daysLeft };
+            return { status: 'active', daysLeft, start, end };
         } else {
             return { status: 'expired' };
         }
@@ -156,8 +156,19 @@
             <div class="product-card bg-white rounded-2xl shadow-xl overflow-hidden border-2 border-gray-200">
                 <!-- 프로모션 배지 -->
                 ${promotionStatus.status === 'active' ? `
-                    <div class="bg-gradient-to-r from-red-500 to-orange-500 text-white text-center py-1.5 px-2">
-                        <div class="font-bold text-xs">🎉 ${couponsData.promotion.name}</div>
+                    <div class="bg-gradient-to-r from-orange-500 to-red-500 text-white text-center py-2 px-3">
+                        <div class="flex items-center justify-center gap-1.5 mb-1">
+                            <svg class="w-3.5 h-3.5" fill="currentColor" viewBox="0 0 20 20">
+                                <path fill-rule="evenodd" d="M5 2a1 1 0 011 1v1h1a1 1 0 010 2H6v1a1 1 0 01-2 0V6H3a1 1 0 010-2h1V3a1 1 0 011-1zm0 10a1 1 0 011 1v1h1a1 1 0 110 2H6v1a1 1 0 11-2 0v-1H3a1 1 0 110-2h1v-1a1 1 0 011-1zM12 2a1 1 0 01.967.744L14.146 7.2 17.5 9.134a1 1 0 010 1.732l-3.354 1.935-1.18 4.455a1 1 0 01-1.933 0L9.854 12.8 6.5 10.866a1 1 0 010-1.732l3.354-1.935 1.18-4.455A1 1 0 0112 2z" clip-rule="evenodd"/>
+                            </svg>
+                            <span class="font-bold text-xs">${couponsData.promotion.name}</span>
+                        </div>
+                        <div class="countdown-active text-orange-100 text-xs font-semibold" data-target="${promotionStatus.end ? promotionStatus.end.getTime() : ''}">⏰ 종료까지 계산 중...</div>
+                    </div>
+                ` : promotionStatus.status === 'upcoming' ? `
+                    <div class="bg-gradient-to-r from-blue-500 to-indigo-500 text-white text-center py-2 px-3">
+                        <div class="font-bold text-xs mb-1">${couponsData.promotion.name}</div>
+                        <div class="countdown-upcoming text-blue-100 text-xs font-semibold" data-target="${promotionStatus.start ? promotionStatus.start.getTime() : ''}">D-${promotionStatus.daysLeft} 곧 시작</div>
                     </div>
                 ` : ''}
 
@@ -313,6 +324,47 @@
         }
     }
 
+    function updateCountdown() {
+        const countdownUpcoming = document.querySelectorAll('.countdown-upcoming');
+        const countdownActive = document.querySelectorAll('.countdown-active');
+
+        countdownUpcoming.forEach(elem => {
+            const target = parseInt(elem.dataset.target);
+            if (!target) return;
+
+            const now = new Date().getTime();
+            const diff = target - now;
+
+            if (diff > 0) {
+                const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+                const hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+                const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+
+                elem.textContent = `D-${days} ${hours}:${String(minutes).padStart(2, '0')}`;
+            } else {
+                elem.textContent = '시작되었습니다!';
+            }
+        });
+
+        countdownActive.forEach(elem => {
+            const target = parseInt(elem.dataset.target);
+            if (!target) return;
+
+            const now = new Date().getTime();
+            const diff = target - now;
+
+            if (diff > 0) {
+                const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+                const hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+                const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+
+                elem.textContent = `⏰ ${days}일 ${hours}:${String(minutes).padStart(2, '0')}`;
+            } else {
+                elem.textContent = '종료되었습니다!';
+            }
+        });
+    }
+
     function updateIframeHeight() {
         try {
             const container = document.getElementById('banner-container');
@@ -341,6 +393,10 @@
 
     async function init() {
         await loadBanner();
+
+        // 카운트다운 시작
+        updateCountdown();
+        setInterval(updateCountdown, 1000);
 
         // 초기 높이 측정
         updateIframeHeight();
