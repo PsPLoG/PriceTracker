@@ -1,54 +1,54 @@
 {
   "promotion": {
-    "name": "사랑가득 선물대전",
-    "start_date": "2026-02-01",
-    "end_date": "2026-02-07"
+    "name": "설레는 특가전",
+    "start_date": "2026-02-09",
+    "end_date": "2026-02-23"
   },
   "discount_codes": [
     {
-      "code": "PPOMKR02",
+      "code": "AEPPOM02",
       "min_price": 19,
       "discount": 2,
       "note": "일부상품 적용 불가"
     },
     {
-      "code": "PPOMKR04",
-      "min_price": 34,
+      "code": "AEPPOM04",
+      "min_price": 32,
       "discount": 4,
       "note": "일부상품 적용 불가"
     },
     {
-      "code": "PPOMKR06",
-      "min_price": 53,
-      "discount": 6,
+      "code": "AEPPOM07",
+      "min_price": 56,
+      "discount": 7,
       "note": "일부상품 적용 불가"
     },
     {
-      "code": "PPOMKR09",
+      "code": "AEPPOM09",
       "min_price": 86,
       "discount": 9,
       "note": "일부상품 적용 불가"
     },
     {
-      "code": "PPOMKR15",
+      "code": "AEPPOM15",
       "min_price": 139,
       "discount": 15,
       "note": "일부상품 적용 불가"
     },
     {
-      "code": "PPOMKR26",
+      "code": "AEPPOM26",
       "min_price": 239,
       "discount": 26,
       "note": "일부상품 적용 불가"
     },
     {
-      "code": "PPOMKR34",
+      "code": "AEPPOM34",
       "min_price": 332,
       "discount": 34,
       "note": "일부상품 적용 불가"
     },
     {
-      "code": "PPOMKR54",
+      "code": "AEPPOM54",
       "min_price": 529,
       "discount": 54,
       "note": "일부상품 적용 불가"
@@ -56,10 +56,16 @@
   ],
   "card_discounts": [
     {
-      "card_name": "유니온페이",
+      "card_name": "삼성 비자 카드",
+      "min_price": 100,
+      "discount": 15,
+      "note": "한국 배송 상품 제외 적용 가능 (계정 당 2회)"
+    },
+    {
+      "card_name": "네이버페이",
       "min_price": 70,
-      "discount": 10,
-      "note": "한국 배송 상품 제외 적용 가능"
+      "discount": 4,
+      "note": "전상품 적용 가능"
     }
   ]
 }
