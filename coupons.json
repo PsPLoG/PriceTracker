@@ -1,70 +1,136 @@
 {
   "promotion": {
-    "name": "알리익스프레스 16주년 세일",
+    "name": "16주년 그랜드 세일",
     "start_date": "2026-03-16",
-    "end_date": "2026-03-23"
+    "end_date": "2026-03-25"
   },
   "discount_codes": [
     {
-      "code": "AEPPOM02",
-      "min_price": 19,
-      "discount": 2,
+      "code": "PPOMPPU03",
+      "min_price": 22,
+      "discount": 3,
       "note": "일부상품 적용 불가"
     },
     {
-      "code": "AEPPOM04",
-      "min_price": 32,
-      "discount": 4,
+      "code": "PPOMPPU05",
+      "min_price": 36,
+      "discount": 5,
       "note": "일부상품 적용 불가"
     },
     {
-      "code": "AEPPOM07",
-      "min_price": 56,
+      "code": "PPOMPPU06",
+      "min_price": 42,
+      "discount": 6,
+      "note": "3/20~3/22 기간 한정 (일부상품 적용 불가)"
+    },
+    {
+      "code": "PPOMPPU07",
+      "min_price": 54,
       "discount": 7,
       "note": "일부상품 적용 불가"
     },
     {
-      "code": "AEPPOM09",
-      "min_price": 86,
-      "discount": 9,
+      "code": "PPOMPPU11",
+      "min_price": 85,
+      "discount": 11,
       "note": "일부상품 적용 불가"
     },
     {
-      "code": "AEPPOM15",
+      "code": "PPOMPPU18",
       "min_price": 139,
-      "discount": 15,
+      "discount": 18,
       "note": "일부상품 적용 불가"
     },
     {
-      "code": "AEPPOM26",
-      "min_price": 239,
-      "discount": 26,
+      "code": "PPOMPPU27",
+      "min_price": 209,
+      "discount": 27,
       "note": "일부상품 적용 불가"
     },
     {
-      "code": "AEPPOM34",
-      "min_price": 332,
-      "discount": 34,
+      "code": "PPOMPPU45",
+      "min_price": 349,
+      "discount": 45,
       "note": "일부상품 적용 불가"
     },
     {
-      "code": "AEPPOM54",
-      "min_price": 529,
-      "discount": 54,
+      "code": "PPOMPPU70",
+      "min_price": 559,
+      "discount": 70,
+      "note": "일부상품 적용 불가"
+    },
+    {
+      "code": "PPOMPPU85",
+      "min_price": 679,
+      "discount": 85,
       "note": "일부상품 적용 불가"
     }
   ],
   "card_discounts": [
     {
-      "card_name": "삼성 비자 카드",
+      "card_name": "Samsung THE iD. 1st Card",
+      "min_price": 500,
+      "discount": 100,
+      "note": "해외직구 전용 (알리익스프레스 첫결제 시)"
+    },
+    {
+      "card_name": "삼성 VISA 카드",
+      "min_price": 100,
+      "discount": 20,
+      "note": "해외직구 전용"
+    },
+    {
+      "card_name": "UnionPay카드",
       "min_price": 100,
       "discount": 15,
-      "note": "한국 배송 상품 제외 적용 가능 (계정 당 2회)"
+      "note": "해외직구 전용"
+    },
+    {
+      "card_name": "NH농협카드",
+      "min_price": 100,
+      "discount": 14,
+      "note": "해외직구 전용"
+    },
+    {
+      "card_name": "KB/삼성/하나/우리/신한/롯데 Mastercard, 네이버페이 머니카드 Visa, 현대 Visa",
+      "min_price": 100,
+      "discount": 13,
+      "note": "해외직구 전용"
+    },
+    {
+      "card_name": "카카오페이",
+      "min_price": 110,
+      "discount": 10,
+      "note": "전상품 적용 가능"
+    },
+    {
+      "card_name": "알리익스프레스 신한카드",
+      "min_price": 20,
+      "discount": 10,
+      "note": "해외직구 전용 (알리익스프레스 첫결제 시)"
+    },
+    {
+      "card_name": "토스페이",
+      "min_price": 100,
+      "discount": 9,
+      "note": "전상품 적용 가능"
+    },
+    {
+      "card_name": "IBK Mastercard",
+      "min_price": 50,
+      "discount": 7,
+      "note": "해외직구 전용"
     },
     {
       "card_name": "네이버페이",
+      "min_price": 80,
+      "discount": 5,
+      "note": "전상품 적용 가능"
+    },
+    {
+      "card_name": "토스페이 (소액)",
       "min_price": 70,
-      "discount": 4,
+      "discount": 5,
       "note": "전상품 적용 가능"
     }
   ]
