@@ -57,26 +57,33 @@
 
         function calculatePrices(product, coupons) {
             const originalPrice = product.original_price;
-            const coinDiscountedPrice = originalPrice * (1 - product.coin_discount_percent / 100);
-            
-            let afterSellerCoupon = coinDiscountedPrice;
+
+            // 1. 셀러 쿠폰 적용
+            let afterSellerCoupon = originalPrice;
             if (product.seller_coupon && product.seller_coupon.discount > 0) {
-                afterSellerCoupon = coinDiscountedPrice - product.seller_coupon.discount;
+                afterSellerCoupon = originalPrice - product.seller_coupon.discount;
             }
-            
+
+            // 2. 할인 코드 적용
             const bestCode = findBestDiscountCode(afterSellerCoupon, coupons.discount_codes);
-            const codeDiscountedPrice = bestCode 
-                ? afterSellerCoupon - bestCode.discount 
+            const afterCode = bestCode
+                ? afterSellerCoupon - bestCode.discount
                 : afterSellerCoupon;
-            
+
+            // 3. 코인 할인 적용 (마지막)
+            const coinDiscountAmount = originalPrice * product.coin_discount_percent / 100;
+            const afterCoin = afterCode - coinDiscountAmount;
+
+            const finalPrice = product.coin_discount_percent > 0 ? afterCoin : afterCode;
+
             return {
                 original: originalPrice,
-                afterCoin: coinDiscountedPrice,
+                afterCoin: afterCoin,
                 afterSellerCoupon: afterSellerCoupon,
-                finalPrice: codeDiscountedPrice,
+                finalPrice: finalPrice,
                 bestCode: bestCode,
-                totalDiscount: originalPrice - codeDiscountedPrice,
-                discountPercent: ((originalPrice - codeDiscountedPrice) / originalPrice * 100).toFixed(0),
+                totalDiscount: originalPrice - finalPrice,
+                discountPercent: ((originalPrice - finalPrice) / originalPrice * 100).toFixed(0),
                 hasCoinDiscount: product.coin_discount_percent > 0,
                 hasSellerCoupon: product.seller_coupon && product.seller_coupon.discount > 0,
                 sellerCoupon: product.seller_coupon
@@ -177,6 +184,10 @@
                         if (data.promotion) {
                             promotionStatus = getPromotionStatus(data.promotion);
                             if (promotionStatus.status === 'active') {
+                                couponsData.promotion = data.promotion;
+                                couponsData.discount_codes = data.discount_codes || [];
+                                couponsData.card_discounts = data.card_discounts || [];
+                            } else if (promotionStatus.status === 'upcoming') {
                                 couponsData.promotion = data.promotion;
                                 couponsData.discount_codes = data.discount_codes || [];
                                 couponsData.card_discounts = data.card_discounts || [];

@@ -22,7 +22,7 @@
     <div id="listing-container" class="max-w-6xl mx-auto p-4"></div>
 
     <script>
-        const EXCHANGE_RATE = 1390;
+        const EXCHANGE_RATE = 1430;
         const COIN_VALUE = 0.01;
 
         function getPromotionStatus(promotion) {
@@ -54,13 +54,23 @@
 
         function calculateBestPrice(product, coupons) {
             const originalPrice = product.original_price;
-            const coinDiscountedPrice = originalPrice * (1 - product.coin_discount_percent / 100);
-            
-            const bestCode = findBestDiscountCode(coinDiscountedPrice, coupons.discount_codes);
-            const finalPrice = bestCode 
-                ? coinDiscountedPrice - bestCode.discount 
-                : coinDiscountedPrice;
-            
+
+            // 1. 셀러 쿠폰 적용
+            let afterSellerCoupon = originalPrice;
+            if (product.seller_coupon && product.seller_coupon.discount > 0) {
+                afterSellerCoupon = originalPrice - product.seller_coupon.discount;
+            }
+
+            // 2. 할인 코드 적용
+            const bestCode = findBestDiscountCode(afterSellerCoupon, coupons.discount_codes);
+            const afterCode = bestCode
+                ? afterSellerCoupon - bestCode.discount
+                : afterSellerCoupon;
+
+            // 3. 코인 할인 적용 (마지막)
+            const coinDiscountAmount = originalPrice * product.coin_discount_percent / 100;
+            const finalPrice = afterCode - coinDiscountAmount;
+
             return {
                 original: originalPrice,
                 final: finalPrice,
@@ -116,6 +126,8 @@
                                 couponsData.card_discounts = data.card_discounts || [];
                             } else if (promotionStatus.status === 'upcoming') {
                                 couponsData.promotion = data.promotion;
+                                couponsData.discount_codes = data.discount_codes || [];
+                                couponsData.card_discounts = data.card_discounts || [];
                             }
                         }
                     } catch (e) {
@@ -154,7 +166,7 @@
                     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                         ${productEntries.map(([id, product]) => {
                             const prices = calculateBestPrice(product, couponsData);
-                            const hasDiscount = promotionStatus.status === 'active' && prices.discount > 0;
+                            const hasDiscount = (promotionStatus.status === 'active' || promotionStatus.status === 'upcoming') && prices.discount > 0;
                             
                             return `
                                 <div class="bg-white rounded-xl shadow-lg border-2 border-gray-300 overflow-hidden hover:shadow-2xl transition-shadow">

@@ -66,6 +66,32 @@
         setTimeout(updateIframeHeight, 100);
     }
 
+    function toggleAllCodes() {
+        const el = document.getElementById('all-codes');
+        const text = document.getElementById('toggle-codes-text');
+        if (el.classList.contains('hidden')) {
+            el.classList.remove('hidden');
+            text.textContent = '할인 코드 접기';
+        } else {
+            el.classList.add('hidden');
+            text.textContent = '모든 할인 코드 보기';
+        }
+        setTimeout(updateIframeHeight, 100);
+    }
+
+    function toggleAllPayments() {
+        const el = document.getElementById('all-payments');
+        const text = document.getElementById('toggle-payments-text');
+        if (el.classList.contains('hidden')) {
+            el.classList.remove('hidden');
+            text.textContent = '결제 할인 접기';
+        } else {
+            el.classList.add('hidden');
+            text.textContent = '모든 결제 할인 보기';
+        }
+        setTimeout(updateIframeHeight, 100);
+    }
+
     function getPromotionStatus(promotion) {
         if (!promotion || !promotion.start_date || !promotion.end_date) {
             return { status: 'none' };
@@ -336,7 +362,7 @@
                             ` : ''}
 
                             ${prices.bestCode ? `
-                                <div class="p-4 mobile-p-3 bg-gradient-to-r from-red-50 to-pink-50 rounded-lg border-2 border-dashed border-red-400">
+                                <div onclick="copyAndGo('${prices.bestCode.code}', '${product.links[0]}')" class="p-4 mobile-p-3 bg-gradient-to-r from-red-50 to-pink-50 rounded-lg border-2 border-dashed border-red-400 cursor-pointer hover:from-red-100 hover:to-pink-100 active:scale-[0.99] transition-all">
                                     <div class="flex justify-between items-start mb-3">
                                         <div class="flex-1">
                                             <div class="flex items-center gap-2 mb-2">
@@ -345,7 +371,7 @@
                                                 </svg>
                                                 <span class="font-bold text-red-800 mobile-text-sm">할인 코드${isPreview ? ' (예상)' : ''}</span>
                                             </div>
-                                            <code class="inline-block px-3 py-1 bg-white rounded font-mono text-sm mobile-text-sm font-bold text-red-600 border border-red-400 select-all">${prices.bestCode.code}</code>
+                                            <code class="inline-block px-3 py-1 bg-white rounded font-mono text-sm mobile-text-sm font-bold text-red-600 border border-red-400">${prices.bestCode.code}</code>
                                             <div class="text-xs mobile-text-sm text-red-600 mt-2">${prices.bestCode.note}</div>
                                             <div class="text-sm mobile-text-sm text-red-700 mt-1">$${prices.bestCode.min_price} 이상 구매 시 $${prices.bestCode.discount} 할인</div>
                                             ${(() => {
@@ -359,7 +385,12 @@
                                                 return '';
                                             })()}
                                         </div>
-                                        <span class="text-xl mobile-text-lg font-bold text-red-700">-$${prices.bestCode.discount}</span>
+                                        <div class="flex flex-col items-end gap-1">
+                                            <span class="text-xl mobile-text-lg font-bold text-red-700">-$${prices.bestCode.discount}</span>
+                                            <svg class="w-5 h-5 text-red-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"/>
+                                            </svg>
+                                        </div>
                                     </div>
                                 </div>
 
@@ -370,6 +401,38 @@
                                             <div class="text-3xl mobile-text-2xl font-bold text-green-700">$${prices.afterCode.toFixed(2)}</div>
                                             <div class="text-sm mobile-text-sm text-green-600 mt-1">약 ${toKRW(prices.afterCode)}원</div>
                                         </div>
+                                    </div>
+                                </div>
+                            ` : ''}
+
+                            ${couponsData.discount_codes.length > 0 ? `
+                                <div>
+                                    <button onclick="toggleAllCodes()" class="w-full py-2 bg-red-50 hover:bg-red-100 text-red-700 font-semibold rounded-lg transition-colors text-sm border border-red-200">
+                                        <span id="toggle-codes-text">모든 할인 코드 보기</span>
+                                    </button>
+                                    <div id="all-codes" class="hidden mt-2 space-y-1.5">
+                                        ${couponsData.discount_codes.map(code => {
+                                            const isBest = prices.bestCode && prices.bestCode.code === code.code;
+                                            const isApplicable = prices.afterSellerCoupon >= code.min_price;
+                                            return `
+                                            <div onclick="copyAndGo('${code.code}', '${product.links[0]}')" class="flex items-center justify-between p-2.5 mobile-p-3 rounded-lg border cursor-pointer active:scale-[0.98] transition-transform ${isBest ? 'bg-red-50 border-red-400 ring-1 ring-red-300 hover:bg-red-100' : isApplicable ? 'bg-white border-red-200 hover:bg-red-50' : 'bg-gray-50 border-gray-200 hover:bg-gray-100'}">
+                                                <div class="flex-1 min-w-0">
+                                                    <div class="flex items-center gap-2 flex-wrap">
+                                                        <code class="px-2 py-0.5 bg-white rounded font-mono text-sm mobile-text-sm font-bold ${isBest ? 'text-red-600 border border-red-400' : 'text-gray-700 border border-gray-300'}">${code.code}</code>
+                                                        ${isBest ? '<span class="text-xs bg-red-500 text-white px-1.5 py-0.5 rounded font-bold">적용</span>' : ''}
+                                                    </div>
+                                                    <div class="text-xs mobile-text-sm mt-1 ${isBest ? 'text-red-600' : isApplicable ? 'text-gray-600' : 'text-gray-400'}">
+                                                        $${code.min_price} 이상 구매 시 $${code.discount} 할인${code.note !== '일부상품 적용 불가' ? ' · ' + code.note : ''}
+                                                    </div>
+                                                </div>
+                                                <div class="flex items-center gap-2 ml-2">
+                                                    <span class="font-bold text-sm mobile-text-sm ${isBest ? 'text-red-700' : isApplicable ? 'text-red-600' : 'text-gray-400'}">-$${code.discount}</span>
+                                                    <svg class="w-4 h-4 ${isBest ? 'text-red-500' : isApplicable ? 'text-red-400' : 'text-gray-300'}" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"/>
+                                                    </svg>
+                                                </div>
+                                            </div>`;
+                                        }).join('')}
                                     </div>
                                 </div>
                             ` : ''}
@@ -454,6 +517,31 @@
                                         }).join('')}
                                     </div>
                                 ` : ''}
+                            </div>
+                        ` : ''}
+
+                        ${couponsData.card_discounts.length > 0 ? `
+                            <div class="mb-6">
+                                <button onclick="toggleAllPayments()" class="w-full py-2 bg-purple-50 hover:bg-purple-100 text-purple-700 font-semibold rounded-lg transition-colors text-sm border border-purple-200">
+                                    <span id="toggle-payments-text">모든 결제 할인 보기</span>
+                                </button>
+                                <div id="all-payments" class="hidden mt-2 space-y-1.5">
+                                    ${couponsData.card_discounts.map(card => {
+                                        const isApplicable = prices.afterCode >= card.min_price;
+                                        const finalPrice = (hasCoinDiscount ? prices.afterCoin : prices.afterCode) - card.discount;
+                                        return `
+                                        <div class="flex items-center justify-between p-2.5 mobile-p-3 rounded-lg border ${isApplicable ? 'bg-purple-50 border-purple-300' : 'bg-gray-50 border-gray-200'}">
+                                            <div class="flex-1 min-w-0">
+                                                <div class="font-semibold text-sm mobile-text-sm ${isApplicable ? 'text-purple-900' : 'text-gray-500'}">${card.card_name}</div>
+                                                <div class="text-xs mobile-text-sm mt-1 ${isApplicable ? 'text-purple-600' : 'text-gray-400'}">
+                                                    $${card.min_price} 이상 · ${card.note}
+                                                </div>
+                                                ${isApplicable ? `<div class="text-xs mobile-text-sm text-purple-700 mt-0.5 font-semibold">→ $${finalPrice.toFixed(2)} (약 ${toKRW(finalPrice)}원)</div>` : ''}
+                                            </div>
+                                            <span class="font-bold text-sm mobile-text-sm ml-2 ${isApplicable ? 'text-purple-700' : 'text-gray-400'}">-$${card.discount}</span>
+                                        </div>`;
+                                    }).join('')}
+                                </div>
                             </div>
                         ` : ''}
 
