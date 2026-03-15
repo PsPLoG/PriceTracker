@@ -26,7 +26,7 @@
 <script>
     const params = new URLSearchParams(window.location.search);
     const blogId = params.get('id');
-    const EXCHANGE_RATE = 1430;
+    const EXCHANGE_RATE = 1490;
     const COIN_VALUE = 0.01;
 
     function copyAndGo(code, url) {
@@ -545,25 +545,25 @@
                             </div>
                         ` : ''}
 
-                        ${hasDiscounts ? `
-                            <div class="p-4 mobile-p-3 bg-gradient-to-r from-blue-50 to-indigo-50 rounded-lg border-2 border-blue-400 mb-4">
-                                <div class="text-center">
-                                    <div class="text-sm mobile-text-sm text-blue-700 mb-1">${isPreview ? '예상 ' : ''}최대 절약 가능 금액</div>
-                                    <div class="text-3xl mobile-text-2xl font-bold text-blue-700">
-                                        $${(prices.original - (hasCoinDiscount ? prices.afterCoin : prices.afterCode)).toFixed(2)}
-                                        ${prices.applicableCards.length > 0 ? `<span class="text-lg mobile-text-base">~ $${(prices.original - (hasCoinDiscount ? prices.afterCoin : prices.afterCode) + Math.max(...prices.applicableCards.map(c => c.discount))).toFixed(2)}</span>` : ''}
-                                    </div>
-                                    <div class="text-sm mobile-text-sm text-blue-600 mt-1">${((prices.original - (hasCoinDiscount ? prices.afterCoin : prices.afterCode)) / prices.original * 100).toFixed(0)}% 할인</div>
-                                </div>
-                            </div>
-                        ` : ''}
-
-                        <button onclick="copyAndGo('${prices.bestCode ? prices.bestCode.code : ''}', '${product.links[0]}')" class="flex items-center justify-center gap-2 w-full py-4 mobile-py-3 bg-gradient-to-r from-orange-500 to-red-500 hover:from-orange-600 hover:to-red-600 text-white font-bold rounded-lg transition-all transform hover:scale-105 shadow-lg text-lg mobile-text-base">
-                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"/>
-                            </svg>
-                            ${prices.bestCode ? '쿠폰 복사하고 구매하기' : '구매하기'}
-                        </button>
+                        ${(() => {
+                            const bestFinalPrice = hasCoinDiscount ? prices.afterCoin : prices.afterCode;
+                            if (prices.bestCode) {
+                                return `
+                                <button onclick="copyAndGo('${prices.bestCode.code}', '${product.links[0]}')" class="flex items-center justify-center gap-2 w-full py-4 mobile-py-3 bg-gradient-to-r from-orange-500 to-red-500 hover:from-orange-600 hover:to-red-600 text-white font-bold rounded-lg transition-all transform hover:scale-105 shadow-lg text-lg mobile-text-base">
+                                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"/>
+                                    </svg>
+                                    쿠폰 복사하고 ${toKRW(bestFinalPrice)}원($${bestFinalPrice.toFixed(2)})에 구매하기
+                                </button>`;
+                            }
+                            return `
+                            <button onclick="copyAndGo('', '${product.links[0]}')" class="flex items-center justify-center gap-2 w-full py-4 mobile-py-3 bg-gradient-to-r from-orange-500 to-red-500 hover:from-orange-600 hover:to-red-600 text-white font-bold rounded-lg transition-all transform hover:scale-105 shadow-lg text-lg mobile-text-base">
+                                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"/>
+                                </svg>
+                                구매하기
+                            </button>`;
+                        })()}
 
                         <div class="mt-4 pt-4 border-t border-gray-200 text-xs text-gray-500 text-center">
                             ${hasDiscounts ? '<div>💡 결제 시 위 할인 코드를 입력하고 해당 카드로 결제하세요</div>' : ''}

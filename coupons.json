@@ -68,12 +68,6 @@
   ],
   "card_discounts": [
     {
-      "card_name": "Samsung THE iD. 1st Card",
-      "min_price": 500,
-      "discount": 100,
-      "note": "해외직구 전용 (알리익스프레스 첫결제 시)"
-    },
-    {
       "card_name": "삼성 VISA 카드",
       "min_price": 100,
       "discount": 20,
