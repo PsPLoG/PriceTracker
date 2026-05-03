@@ -1,53 +1,59 @@
 {
   "promotion": {
-    "name": "브랜드 특가전",
-    "start_date": "2026-04-20",
-    "end_date": "2026-04-24"
+    "name": "5월 Choice Day",
+    "start_date": "2026-05-01",
+    "end_date": "2026-05-07"
   },
   "discount_codes": [
     {
-      "code": "PPOMPPU02",
-      "min_price": 23,
-      "discount": 2,
-      "note": "특정 브랜드 상품 전용"
+      "code": "PPOM03",
+      "min_price": 22,
+      "discount": 3,
+      "note": "일부상품 적용 불가"
     },
     {
-      "code": "PPOMPPU07",
+      "code": "PPOM04",
+      "min_price": 34,
+      "discount": 4,
+      "note": "일부상품 적용 불가"
+    },
+    {
+      "code": "PPOM07",
       "min_price": 56,
       "discount": 7,
-      "note": "특정 브랜드 상품 전용"
+      "note": "일부상품 적용 불가"
     },
     {
-      "code": "PPOMPPU10",
-      "min_price": 88,
+      "code": "PPOM10",
+      "min_price": 86,
       "discount": 10,
-      "note": "특정 브랜드 상품 전용"
+      "note": "일부상품 적용 불가"
     },
     {
-      "code": "PPOMPPU16",
+      "code": "PPOM16",
       "min_price": 139,
       "discount": 16,
-      "note": "특정 브랜드 상품 전용"
+      "note": "일부상품 적용 불가"
     },
     {
-      "code": "PPOMPPU24",
-      "min_price": 209,
-      "discount": 24,
-      "note": "특정 브랜드 상품 전용"
+      "code": "PPOM27",
+      "min_price": 239,
+      "discount": 27,
+      "note": "일부상품 적용 불가"
+    },
+    {
+      "code": "PPOM38",
+      "min_price": 349,
+      "discount": 38,
+      "note": "일부상품 적용 불가"
     }
   ],
   "card_discounts": [
     {
-      "card_name": "삼성 VISA 카드",
-      "min_price": 100,
-      "discount": 20,
-      "note": "해외직구 상품 전용"
-    },
-    {
-      "card_name": "신한 Mastercard",
+      "card_name": "토스페이",
       "min_price": 80,
-      "discount": 5,
-      "note": "해외직구 상품 전용"
+      "discount": 4,
+      "note": "전상품 적용 가능"
     }
   ]
 }
