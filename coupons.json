@@ -1,51 +1,49 @@
 {
   "promotion": {
-    "name": "쿨한 JUNE 혜택",
-    "preheat_start_date": "2026-05-29",
-    "preheat_end_date": "2026-05-31",
-    "start_date": "2026-06-01",
-    "end_date": "2026-06-10",
+    "name": "바캉스 준비",
+    "start_date": "2026-06-15",
+    "end_date": "2026-06-20",
     "timezone": "Asia/Seoul"
   },
   "discount_codes": [
     {
-      "code": "PPOM03",
+      "code": "BSJJ03",
       "min_price": 21,
       "discount": 3,
       "note": "일부상품 적용 불가"
     },
     {
-      "code": "PPOM05",
+      "code": "PXKL05",
       "min_price": 35,
       "discount": 5,
       "note": "일부상품 적용 불가"
     },
     {
-      "code": "PPOM07",
+      "code": "QAZX07",
       "min_price": 52,
       "discount": 7,
       "note": "일부상품 적용 불가"
     },
     {
-      "code": "PPOM12",
+      "code": "RWSW12",
       "min_price": 86,
       "discount": 12,
       "note": "일부상품 적용 불가"
     },
     {
-      "code": "PPOM18",
+      "code": "ZUIP18",
       "min_price": 139,
       "discount": 18,
       "note": "일부상품 적용 불가"
     },
     {
-      "code": "PPOM26",
+      "code": "NMBQ26",
       "min_price": 209,
       "discount": 26,
       "note": "일부상품 적용 불가"
     },
     {
-      "code": "PPOM40",
+      "code": "CVXZ40",
       "min_price": 349,
       "discount": 40,
       "note": "일부상품 적용 불가"
@@ -53,97 +51,13 @@
   ],
   "card_discounts": [
     {
-      "card_name": "우리 Mastercard",
-      "min_price": 60,
-      "discount": 9,
-      "note": "전상품 적용 가능"
-    },
-    {
-      "card_name": "토스페이",
-      "min_price": 80,
-      "discount": 6,
-      "note": "전상품 적용 가능"
-    },
-    {
-      "card_name": "네이버페이",
-      "min_price": 90,
-      "discount": 6,
-      "note": "전상품 적용 가능"
-    },
-    {
-      "card_name": "삼성 Mastercard",
-      "min_price": 100,
-      "discount": 15,
-      "note": "전상품 적용 가능"
-    },
-    {
-      "card_name": "하나 Mastercard",
-      "min_price": 100,
-      "discount": 15,
-      "note": "전상품 적용 가능"
-    },
-    {
-      "card_name": "신한 Mastercard",
-      "min_price": 100,
-      "discount": 15,
-      "note": "전상품 적용 가능"
-    },
-    {
-      "card_name": "롯데 Mastercard",
-      "min_price": 100,
-      "discount": 15,
-      "note": "전상품 적용 가능"
-    },
-    {
-      "card_name": "KB VISA 카드",
-      "min_price": 100,
-      "discount": 15,
-      "note": "전상품 적용 가능"
-    },
-    {
-      "card_name": "하나 VISA 카드",
-      "min_price": 100,
-      "discount": 15,
-      "note": "전상품 적용 가능"
-    },
-    {
-      "card_name": "Naverpay MoneyCard Visa Card",
-      "min_price": 100,
-      "discount": 15,
-      "note": "전상품 적용 가능"
-    },
-    {
-      "card_name": "IBK Mastercard",
-      "min_price": 100,
-      "discount": 15,
-      "note": "전상품 적용 가능"
-    },
-    {
-      "card_name": "BC Mastercard",
-      "min_price": 100,
-      "discount": 15,
-      "note": "전상품 적용 가능"
-    },
-    {
       "card_name": "신한 VISA 카드",
       "min_price": 100,
       "discount": 15,
-      "note": "전상품 적용 가능"
+      "note": "해외직구 상품 전용"
     },
     {
-      "card_name": "KB Mastercard",
-      "min_price": 100,
-      "discount": 15,
-      "note": "전상품 적용 가능"
-    },
-    {
-      "card_name": "NH농협카드",
-      "min_price": 100,
-      "discount": 14,
-      "note": "전상품 적용 가능"
-    },
-    {
-      "card_name": "카카오페이",
+      "card_name": "토스페이",
       "min_price": 120,
       "discount": 10,
       "note": "전상품 적용 가능"
