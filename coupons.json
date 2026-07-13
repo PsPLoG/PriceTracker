@@ -1,49 +1,49 @@
 {
   "promotion": {
-    "name": "바캉스 준비",
-    "start_date": "2026-06-15",
-    "end_date": "2026-06-20",
+    "name": "여름아 반가워",
+    "start_date": "2026-07-13",
+    "end_date": "2026-07-19",
     "timezone": "Asia/Seoul"
   },
   "discount_codes": [
     {
-      "code": "BSJJ03",
-      "min_price": 21,
+      "code": "KJDS03",
+      "min_price": 22,
       "discount": 3,
       "note": "일부상품 적용 불가"
     },
     {
-      "code": "PXKL05",
+      "code": "KJDS05",
       "min_price": 35,
       "discount": 5,
       "note": "일부상품 적용 불가"
     },
     {
-      "code": "QAZX07",
+      "code": "KJDS07",
       "min_price": 52,
       "discount": 7,
       "note": "일부상품 적용 불가"
     },
     {
-      "code": "RWSW12",
-      "min_price": 86,
-      "discount": 12,
+      "code": "KJDS11",
+      "min_price": 84,
+      "discount": 11,
       "note": "일부상품 적용 불가"
     },
     {
-      "code": "ZUIP18",
-      "min_price": 139,
-      "discount": 18,
+      "code": "KJDS17",
+      "min_price": 136,
+      "discount": 17,
       "note": "일부상품 적용 불가"
     },
     {
-      "code": "NMBQ26",
+      "code": "KJDS24",
       "min_price": 209,
-      "discount": 26,
+      "discount": 24,
       "note": "일부상품 적용 불가"
     },
     {
-      "code": "CVXZ40",
+      "code": "KJDS40",
       "min_price": 349,
       "discount": 40,
       "note": "일부상품 적용 불가"
@@ -51,13 +51,13 @@
   ],
   "card_discounts": [
     {
-      "card_name": "신한 VISA 카드",
-      "min_price": 100,
-      "discount": 15,
-      "note": "해외직구 상품 전용"
+      "card_name": "토스페이",
+      "min_price": 130,
+      "discount": 11,
+      "note": "전상품 적용 가능"
     },
     {
-      "card_name": "토스페이",
+      "card_name": "네이버페이",
       "min_price": 120,
       "discount": 10,
       "note": "전상품 적용 가능"
