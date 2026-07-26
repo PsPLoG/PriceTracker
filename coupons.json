@@ -1,65 +1,29 @@
 {
   "promotion": {
-    "name": "여름아 반가워",
-    "start_date": "2026-07-13",
-    "end_date": "2026-07-19",
+    "name": "7월 알급날",
+    "start_date": "2026-07-26",
+    "end_date": "2026-07-29",
     "timezone": "Asia/Seoul"
   },
   "discount_codes": [
     {
-      "code": "KJDS03",
-      "min_price": 22,
+      "code": "KAFE03",
+      "min_price": 25,
       "discount": 3,
       "note": "일부상품 적용 불가"
     },
     {
-      "code": "KJDS05",
-      "min_price": 35,
+      "code": "KAFE05",
+      "min_price": 41,
       "discount": 5,
-      "note": "일부상품 적용 불가"
-    },
-    {
-      "code": "KJDS07",
-      "min_price": 52,
-      "discount": 7,
-      "note": "일부상품 적용 불가"
-    },
-    {
-      "code": "KJDS11",
-      "min_price": 84,
-      "discount": 11,
-      "note": "일부상품 적용 불가"
-    },
-    {
-      "code": "KJDS17",
-      "min_price": 136,
-      "discount": 17,
-      "note": "일부상품 적용 불가"
-    },
-    {
-      "code": "KJDS24",
-      "min_price": 209,
-      "discount": 24,
-      "note": "일부상품 적용 불가"
-    },
-    {
-      "code": "KJDS40",
-      "min_price": 349,
-      "discount": 40,
       "note": "일부상품 적용 불가"
     }
   ],
   "card_discounts": [
     {
-      "card_name": "토스페이",
-      "min_price": 130,
-      "discount": 11,
-      "note": "전상품 적용 가능"
-    },
-    {
       "card_name": "네이버페이",
-      "min_price": 120,
-      "discount": 10,
+      "min_price": 100,
+      "discount": 6,
       "note": "전상품 적용 가능"
     }
   ]
