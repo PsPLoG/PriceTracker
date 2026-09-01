@@ -1,138 +1,52 @@
 {
   "promotion": {
-    "name": "브랜드에 ALL-IN",
-    "start_date": "2026-08-17",
-    "end_date": "2026-08-26",
+    "name": "특가왔추",
+    "preheat_start_date": "2026-08-30",
+    "preheat_end_date": "2026-08-31",
+    "start_date": "2026-09-01",
+    "end_date": "2026-09-07",
     "timezone": "Asia/Seoul"
   },
   "discount_codes": [
     {
-      "code": "KFSL03",
-      "min_price": 21,
-      "discount": 3,
+      "code": "KBGY03",
+      "min_price": 28,
+      "discount": 3.5,
       "note": "일부상품 적용 불가"
     },
     {
-      "code": "KFSL05",
-      "min_price": 36,
-      "discount": 5,
-      "note": "일부상품 적용 불가"
-    },
-    {
-      "code": "KFSL07",
-      "min_price": 52,
+      "code": "KBGY07",
+      "min_price": 56,
       "discount": 7,
       "note": "일부상품 적용 불가"
     },
     {
-      "code": "KFSL12",
-      "min_price": 92,
-      "discount": 12,
+      "code": "KBGY10",
+      "min_price": 90,
+      "discount": 10,
       "note": "일부상품 적용 불가"
     },
     {
-      "code": "KFSL17",
+      "code": "KBGY15",
       "min_price": 139,
-      "discount": 17,
+      "discount": 15,
       "note": "일부상품 적용 불가"
     },
     {
-      "code": "KFSL25",
-      "min_price": 209,
-      "discount": 25,
-      "note": "일부상품 적용 불가"
-    },
-    {
-      "code": "KFSL40",
+      "code": "KBGY35",
       "min_price": 349,
-      "discount": 40,
+      "discount": 35,
       "note": "일부상품 적용 불가"
     }
   ],
   "card_discounts": [
     {
-      "card_name": "토스페이",
-      "min_price": 130,
-      "discount": 11,
-      "note": "전상품 적용 가능"
-    },
-    {
-      "card_name": "카카오페이",
-      "min_price": 120,
+      "card_name": "유니온페이",
+      "min_price": 70,
       "discount": 10,
-      "note": "전상품 적용 가능"
-    },
-    {
-      "card_name": "네이버페이",
-      "min_price": 120,
-      "discount": 10,
-      "note": "전상품 적용 가능"
-    },
-    {
-      "card_name": "NH농협카드",
-      "min_price": 100,
-      "discount": 16,
-      "note": "해외직구 상품 전용"
-    },
-    {
-      "card_name": "삼성 Mastercard",
-      "min_price": 100,
-      "discount": 15,
-      "note": "해외직구 상품 전용"
-    },
-    {
-      "card_name": "하나 Mastercard",
-      "min_price": 100,
-      "discount": 15,
-      "note": "해외직구 상품 전용"
-    },
-    {
-      "card_name": "신한 Mastercard",
-      "min_price": 100,
-      "discount": 15,
-      "note": "해외직구 상품 전용"
-    },
-    {
-      "card_name": "롯데 Mastercard",
-      "min_price": 100,
-      "discount": 15,
-      "note": "해외직구 상품 전용"
-    },
-    {
-      "card_name": "삼성 VISA Mastercard",
-      "min_price": 100,
-      "discount": 15,
-      "note": "해외직구 상품 전용"
-    },
-    {
-      "card_name": "IBK Mastercard",
-      "min_price": 100,
-      "discount": 15,
-      "note": "해외직구 상품 전용"
-    },
-    {
-      "card_name": "BC Mastercard",
-      "min_price": 100,
-      "discount": 15,
-      "note": "해외직구 상품 전용"
-    },
-    {
-      "card_name": "신한VISA 카드",
-      "min_price": 100,
-      "discount": 15,
-      "note": "해외직구 상품 전용"
-    },
-    {
-      "card_name": "KB Mastercard",
-      "min_price": 100,
-      "discount": 15,
-      "note": "해외직구 상품 전용"
-    },
-    {
-      "card_name": "우리 Mastercard",
-      "min_price": 60,
-      "discount": 9,
-      "note": "해외직구 상품 전용"
+      "start_date": "2026-09-03",
+      "end_date": "2026-09-07",
+      "note": "해외직구 상품 전용 · 9/3-9/7 기간 한정"
     }
   ]
 }
