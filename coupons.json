@@ -1,52 +1,74 @@
 {
   "promotion": {
-    "name": "특가왔추",
-    "preheat_start_date": "2026-08-30",
-    "preheat_end_date": "2026-08-31",
-    "start_date": "2026-09-01",
-    "end_date": "2026-09-07",
+    "name": "FALL IN 추석",
+    "preheat_start_date": "2026-09-12",
+    "preheat_end_date": "2026-09-13",
+    "start_date": "2026-09-14",
+    "end_date": "2026-09-20",
     "timezone": "Asia/Seoul"
   },
   "discount_codes": [
     {
-      "code": "KBGY03",
-      "min_price": 28,
-      "discount": 3.5,
+      "code": "KLDY04",
+      "min_price": 34,
+      "discount": 4,
       "note": "일부상품 적용 불가"
     },
     {
-      "code": "KBGY07",
-      "min_price": 56,
-      "discount": 7,
+      "code": "KLDY09",
+      "min_price": 75,
+      "discount": 9,
       "note": "일부상품 적용 불가"
     },
     {
-      "code": "KBGY10",
-      "min_price": 90,
-      "discount": 10,
-      "note": "일부상품 적용 불가"
-    },
-    {
-      "code": "KBGY15",
-      "min_price": 139,
+      "code": "KLDY15",
+      "min_price": 142,
       "discount": 15,
       "note": "일부상품 적용 불가"
     },
     {
-      "code": "KBGY35",
-      "min_price": 349,
-      "discount": 35,
+      "code": "KLDY36",
+      "min_price": 358,
+      "discount": 36,
       "note": "일부상품 적용 불가"
     }
   ],
   "card_discounts": [
     {
-      "card_name": "유니온페이",
-      "min_price": 70,
-      "discount": 10,
-      "start_date": "2026-09-03",
-      "end_date": "2026-09-07",
-      "note": "해외직구 상품 전용 · 9/3-9/7 기간 한정"
+      "card_name": "롯데카드",
+      "min_price": 13.423,
+      "discount": 0.94,
+      "currency": "KRW",
+      "min_price_krw": 20000,
+      "discount_krw": 1400,
+      "scope": "all",
+      "note": "전상품 적용 가능 · ₩20,000 이상 구매 시 ₩1,400 즉시 할인"
+    },
+    {
+      "card_name": "롯데카드",
+      "min_price": 167.785,
+      "discount": 11.745,
+      "currency": "KRW",
+      "min_price_krw": 250000,
+      "discount_krw": 17500,
+      "scope": "all",
+      "note": "전상품 적용 가능 · ₩250,000 이상 구매 시 ₩17,500 즉시 할인"
+    },
+    {
+      "card_name": "삼성 VISA 카드",
+      "min_price": 100,
+      "discount": 25,
+      "currency": "USD",
+      "scope": "overseas",
+      "note": "해외직구 상품 전용"
+    },
+    {
+      "card_name": "삼성 iD SELECT UP Visa카드",
+      "min_price": 300,
+      "discount": 100,
+      "currency": "USD",
+      "scope": "overseas",
+      "note": "해외직구 상품 전용"
     }
   ]
 }
