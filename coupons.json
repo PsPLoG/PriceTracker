@@ -150,8 +150,8 @@
     },
     {
       "card_name": "카카오페이",
-      "min_price": 67.114,
-      "discount": 5.369,
+      "min_price": 74.683,
+      "discount": 5.975,
       "currency": "KRW",
       "min_price_krw": 100000,
       "discount_krw": 8000,
@@ -160,8 +160,8 @@
     },
     {
       "card_name": "네이버페이",
-      "min_price": 67.114,
-      "discount": 4.698,
+      "min_price": 74.683,
+      "discount": 5.228,
       "currency": "KRW",
       "min_price_krw": 100000,
       "discount_krw": 7000,
@@ -170,8 +170,8 @@
     },
     {
       "card_name": "토스페이",
-      "min_price": 67.114,
-      "discount": 5.369,
+      "min_price": 74.683,
+      "discount": 5.975,
       "currency": "KRW",
       "min_price_krw": 100000,
       "discount_krw": 8000,
@@ -180,8 +180,8 @@
     },
     {
       "card_name": "카카오페이",
-      "min_price": 107.382,
-      "discount": 8.725,
+      "min_price": 119.493,
+      "discount": 9.709,
       "currency": "KRW",
       "min_price_krw": 160000,
       "discount_krw": 13000,
@@ -190,8 +190,8 @@
     },
     {
       "card_name": "네이버페이",
-      "min_price": 107.382,
-      "discount": 8.725,
+      "min_price": 119.493,
+      "discount": 9.709,
       "currency": "KRW",
       "min_price_krw": 160000,
       "discount_krw": 13000,
@@ -200,13 +200,19 @@
     },
     {
       "card_name": "토스페이",
-      "min_price": 107.382,
-      "discount": 8.725,
+      "min_price": 119.493,
+      "discount": 9.709,
       "currency": "KRW",
       "min_price_krw": 160000,
       "discount_krw": 13000,
       "scope": "all",
       "note": "전상품 적용 가능 · ₩160,000 이상 구매 시 ₩13,000 즉시 할인"
     }
-  ]
+  ],
+  "exchange_rate": {
+    "usd_krw": 1339,
+    "as_of": "2026-10-30",
+    "reference": "https://www.currencyconverter.money/usd/krw",
+    "note": "Indicative mid-market reference rate; actual card/bank exchange rates may differ."
+  }
 }
