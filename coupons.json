@@ -1,74 +1,212 @@
 {
   "promotion": {
-    "name": "FALL IN 추석",
-    "preheat_start_date": "2026-09-12",
-    "preheat_end_date": "2026-09-13",
-    "start_date": "2026-09-14",
-    "end_date": "2026-09-20",
+    "name": "11.11 광군제",
+    "preheat_start_date": "2026-10-29",
+    "preheat_end_date": "2026-10-31",
+    "preheat_start_time": "00:00",
+    "preheat_end_time": "23:59",
+    "start_date": "2026-11-01",
+    "end_date": "2026-11-18",
+    "start_time": "00:00",
+    "end_time": "23:59",
     "timezone": "Asia/Seoul"
   },
   "discount_codes": [
     {
-      "code": "KLDY04",
-      "min_price": 34,
+      "code": "KBTY04",
+      "min_price": 27,
       "discount": 4,
       "note": "일부상품 적용 불가"
     },
     {
-      "code": "KLDY09",
-      "min_price": 75,
-      "discount": 9,
+      "code": "KBTY08",
+      "min_price": 58,
+      "discount": 8,
       "note": "일부상품 적용 불가"
     },
     {
-      "code": "KLDY15",
-      "min_price": 142,
-      "discount": 15,
+      "code": "KBTY13",
+      "min_price": 98,
+      "discount": 13,
       "note": "일부상품 적용 불가"
     },
     {
-      "code": "KLDY36",
-      "min_price": 358,
-      "discount": 36,
+      "code": "KBTY19",
+      "min_price": 148,
+      "discount": 19,
+      "note": "일부상품 적용 불가"
+    },
+    {
+      "code": "KBTY28",
+      "min_price": 225,
+      "discount": 28,
+      "note": "일부상품 적용 불가"
+    },
+    {
+      "code": "KBTY45",
+      "min_price": 375,
+      "discount": 45,
       "note": "일부상품 적용 불가"
     }
   ],
   "card_discounts": [
     {
-      "card_name": "롯데카드",
-      "min_price": 13.423,
-      "discount": 0.94,
-      "currency": "KRW",
-      "min_price_krw": 20000,
-      "discount_krw": 1400,
-      "scope": "all",
-      "note": "전상품 적용 가능 · ₩20,000 이상 구매 시 ₩1,400 즉시 할인"
-    },
-    {
-      "card_name": "롯데카드",
-      "min_price": 167.785,
-      "discount": 11.745,
-      "currency": "KRW",
-      "min_price_krw": 250000,
-      "discount_krw": 17500,
-      "scope": "all",
-      "note": "전상품 적용 가능 · ₩250,000 이상 구매 시 ₩17,500 즉시 할인"
-    },
-    {
-      "card_name": "삼성 VISA 카드",
+      "card_name": "NH농협카드",
       "min_price": 100,
-      "discount": 25,
+      "discount": 16,
       "currency": "USD",
-      "scope": "overseas",
-      "note": "해외직구 상품 전용"
+      "note": "카드 결제 할인 · 적용 상품 및 조건은 결제 시 확인"
     },
     {
-      "card_name": "삼성 iD SELECT UP Visa카드",
-      "min_price": 300,
-      "discount": 100,
+      "card_name": "우리카드 VISA",
+      "min_price": 100,
+      "discount": 20,
       "currency": "USD",
-      "scope": "overseas",
-      "note": "해외직구 상품 전용"
+      "note": "카드 결제 할인 · 적용 상품 및 조건은 결제 시 확인"
+    },
+    {
+      "card_name": "KB국민카드 Mastercard",
+      "min_price": 100,
+      "discount": 15,
+      "currency": "USD",
+      "note": "카드 결제 할인 · 적용 상품 및 조건은 결제 시 확인"
+    },
+    {
+      "card_name": "신한카드 Mastercard",
+      "min_price": 100,
+      "discount": 15,
+      "currency": "USD",
+      "note": "카드 결제 할인 · 적용 상품 및 조건은 결제 시 확인"
+    },
+    {
+      "card_name": "삼성카드 Mastercard",
+      "min_price": 100,
+      "discount": 15,
+      "currency": "USD",
+      "note": "카드 결제 할인 · 적용 상품 및 조건은 결제 시 확인"
+    },
+    {
+      "card_name": "하나카드 Mastercard",
+      "min_price": 100,
+      "discount": 15,
+      "currency": "USD",
+      "note": "카드 결제 할인 · 적용 상품 및 조건은 결제 시 확인"
+    },
+    {
+      "card_name": "우리카드 Mastercard",
+      "min_price": 60,
+      "discount": 9,
+      "currency": "USD",
+      "note": "카드 결제 할인 · 적용 상품 및 조건은 결제 시 확인"
+    },
+    {
+      "card_name": "롯데카드 Mastercard",
+      "min_price": 100,
+      "discount": 15,
+      "currency": "USD",
+      "note": "카드 결제 할인 · 적용 상품 및 조건은 결제 시 확인"
+    },
+    {
+      "card_name": "IBK기업은행 Mastercard",
+      "min_price": 100,
+      "discount": 15,
+      "currency": "USD",
+      "note": "카드 결제 할인 · 적용 상품 및 조건은 결제 시 확인"
+    },
+    {
+      "card_name": "비씨카드 Mastercard",
+      "min_price": 100,
+      "discount": 15,
+      "currency": "USD",
+      "note": "카드 결제 할인 · 적용 상품 및 조건은 결제 시 확인"
+    },
+    {
+      "card_name": "토스뱅크 Mastercard",
+      "min_price": 100,
+      "discount": 15,
+      "currency": "USD",
+      "note": "카드 결제 할인 · 적용 상품 및 조건은 결제 시 확인"
+    },
+    {
+      "card_name": "KB국민카드 VISA",
+      "min_price": 150,
+      "discount": 22,
+      "currency": "USD",
+      "note": "카드 결제 할인 · 적용 상품 및 조건은 결제 시 확인"
+    },
+    {
+      "card_name": "롯데카드 VISA",
+      "min_price": 70,
+      "discount": 14,
+      "currency": "USD",
+      "note": "카드 결제 할인 · 적용 상품 및 조건은 결제 시 확인"
+    },
+    {
+      "card_name": "UnionPay",
+      "min_price": 100,
+      "discount": 16,
+      "currency": "USD",
+      "note": "카드 결제 할인 · 적용 상품 및 조건은 결제 시 확인"
+    },
+    {
+      "card_name": "카카오페이",
+      "min_price": 67.114,
+      "discount": 5.369,
+      "currency": "KRW",
+      "min_price_krw": 100000,
+      "discount_krw": 8000,
+      "scope": "all",
+      "note": "전상품 적용 가능 · ₩100,000 이상 구매 시 ₩8,000 즉시 할인"
+    },
+    {
+      "card_name": "네이버페이",
+      "min_price": 67.114,
+      "discount": 4.698,
+      "currency": "KRW",
+      "min_price_krw": 100000,
+      "discount_krw": 7000,
+      "scope": "all",
+      "note": "전상품 적용 가능 · ₩100,000 이상 구매 시 ₩7,000 즉시 할인"
+    },
+    {
+      "card_name": "토스페이",
+      "min_price": 67.114,
+      "discount": 5.369,
+      "currency": "KRW",
+      "min_price_krw": 100000,
+      "discount_krw": 8000,
+      "scope": "all",
+      "note": "전상품 적용 가능 · ₩100,000 이상 구매 시 ₩8,000 즉시 할인"
+    },
+    {
+      "card_name": "카카오페이",
+      "min_price": 107.382,
+      "discount": 8.725,
+      "currency": "KRW",
+      "min_price_krw": 160000,
+      "discount_krw": 13000,
+      "scope": "all",
+      "note": "전상품 적용 가능 · ₩160,000 이상 구매 시 ₩13,000 즉시 할인"
+    },
+    {
+      "card_name": "네이버페이",
+      "min_price": 107.382,
+      "discount": 8.725,
+      "currency": "KRW",
+      "min_price_krw": 160000,
+      "discount_krw": 13000,
+      "scope": "all",
+      "note": "전상품 적용 가능 · ₩160,000 이상 구매 시 ₩13,000 즉시 할인"
+    },
+    {
+      "card_name": "토스페이",
+      "min_price": 107.382,
+      "discount": 8.725,
+      "currency": "KRW",
+      "min_price_krw": 160000,
+      "discount_krw": 13000,
+      "scope": "all",
+      "note": "전상품 적용 가능 · ₩160,000 이상 구매 시 ₩13,000 즉시 할인"
     }
   ]
 }
