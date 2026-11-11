@@ -47,6 +47,30 @@
       "min_price": 375,
       "discount": 45,
       "note": "일부상품 적용 불가"
+    },
+    {
+      "code": "AEKKOL40",
+      "min_price": 40,
+      "discount": 7,
+      "note": "일부상품 적용 불가"
+    },
+    {
+      "code": "AEKKOL105",
+      "min_price": 105,
+      "discount": 18,
+      "note": "일부상품 적용 불가"
+    },
+    {
+      "code": "AEKKOL160",
+      "min_price": 160,
+      "discount": 26,
+      "note": "일부상품 적용 불가"
+    },
+    {
+      "code": "AEKKOL250",
+      "min_price": 250,
+      "discount": 40,
+      "note": "일부상품 적용 불가"
     }
   ],
   "card_discounts": [
